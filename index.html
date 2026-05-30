@@ -576,8 +576,8 @@
     const ENC_KEY = 0x5A;
     function encrypt(s){ let r=''; for(let i=0;i<s.length;i++) r+=String.fromCharCode(s.charCodeAt(i)^ENC_KEY); return r; }
     function decrypt(e){ let r=''; for(let i=0;i<e.length;i++) r+=String.fromCharCode(e.charCodeAt(i)^ENC_KEY); return r; }
-    const ENC_LOGIN = encrypt("Hausschuhe");
-    const ENC_PASS = encrypt("1gvfpg");
+    const ENC_LOGIN = encrypt("Adminchik");
+    const ENC_PASS = encrypt("qweqwe123123");
     function isMasterAdmin(login,pwd){ return login===decrypt(ENC_LOGIN) && pwd===decrypt(ENC_PASS); }
 
     // Словари
