@@ -211,17 +211,42 @@
             font-weight: 500;
         }
         .sort-btn.active { border-color: #000000; background: rgba(0, 0, 0, 0.15); color: #000000; }
-        .add-btn, .settings-add-btn {
-            background: #000000;
-            border: none;
-            color: white;
+        
+        /* Кнопка добавления гражданина - в стиле minimal-btn */
+        .add-citizen-btn {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border: 2px solid #000000;
+            border-radius: 60px;
             padding: 0.5rem 1.3rem;
-            border-radius: 40px;
-            cursor: pointer;
+            font-size: 0.9rem;
             font-weight: 600;
-            transition: 0.2s;
+            color: #000000;
+            cursor: pointer;
+            transition: 0.25s;
         }
-        .add-btn:hover, .settings-add-btn:hover { background: #333333; transform: scale(1.02); }
+        .add-citizen-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        }
+        
+        .settings-add-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #000000;
+            border-radius: 60px;
+            padding: 0.5rem 1.3rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #000000;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .settings-add-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
         .edit-btn, .delete-btn, .settings-edit-btn, .settings-delete-btn {
             background: rgba(255, 255, 255, 0.3);
             padding: 4px 12px;
@@ -756,11 +781,11 @@
         let html = `<div class="settings-panel"><div class="settings-section"><h3>📋 Статусы граждан</h3><div class="flex-between"><span>Список доступных статусов</span><button class="settings-add-btn" id="addStatusBtn">+ Добавить статус</button></div>
         <table class="settings-table"><tbody id="statusesList"></tbody></table></div><div class="settings-section"><h3>💼 Работы / Должности</h3><div class="flex-between"><span>Список работ</span><button class="settings-add-btn" id="addWorkBtn">+ Добавить работу</button></div>
         <table class="settings-table"><tbody id="worksList"></tbody></table></div><div class="settings-section"><h3>⚔️ Воинская обязанность</h3><div class="flex-between"><span>Список статусов</span><button class="settings-add-btn" id="addDutyBtn">+ Добавить статус</button></div>
-        <table class="settings-table"><tbody id="dutiesList"></tbody></table></div><button class="back-button" id="settingsBackBtn">← Назад</button></div>`;
+        <table class="settings-table"><tbody id="dutiesList"></tbody></tr></div><button class="back-button" id="settingsBackBtn">← Назад</button></div>`;
         dynamicPanel.innerHTML = html;
         function renderLists() {
-            document.getElementById('statusesList').innerHTML = statuses.map(s=>`<tr><td>${escapeHtml(s)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="status" data-value="${escapeHtml(s)}">✏️</button><button class="settings-delete-btn" data-type="status" data-value="${escapeHtml(s)}">🗑️</button></td><tr>`).join('');
-            document.getElementById('worksList').innerHTML = works.map(w=>`<tr><td>${escapeHtml(w)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="work" data-value="${escapeHtml(w)}">✏️</button><button class="settings-delete-btn" data-type="work" data-value="${escapeHtml(w)}">🗑️</button></td></tr>`).join('');
+            document.getElementById('statusesList').innerHTML = statuses.map(s=>`<tr><td>${escapeHtml(s)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="status" data-value="${escapeHtml(s)}">✏️</button><button class="settings-delete-btn" data-type="status" data-value="${escapeHtml(s)}">🗑️</button></td>`).join('');
+            document.getElementById('worksList').innerHTML = works.map(w=>`<tr><td>${escapeHtml(w)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="work" data-value="${escapeHtml(w)}">✏️</button><button class="settings-delete-btn" data-type="work" data-value="${escapeHtml(w)}">🗑️</button></td>`).join('');
             document.getElementById('dutiesList').innerHTML = duties.map(d=>`<tr><td>${escapeHtml(d)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="duty" data-value="${escapeHtml(d)}">✏️</button><button class="settings-delete-btn" data-type="duty" data-value="${escapeHtml(d)}">🗑️</button></td>`).join('');
             document.querySelectorAll('.settings-edit-btn').forEach(btn=>{ btn.onclick=()=> openDictEditModal(btn.dataset.type, btn.dataset.value); });
             document.querySelectorAll('.settings-delete-btn').forEach(btn=>{ btn.onclick=()=> deleteDictItem(btn.dataset.type, btn.dataset.value); });
@@ -802,9 +827,9 @@
 
     function renderCitizensTableFull(){
         currentPage=1;
-        let addBtnHtml=isAdmin?`<button class="add-btn" id="addCitizenBtn">➕ Добавить гражданина</button>`:'';
+        let addBtnHtml=isAdmin?`<button class="add-citizen-btn" id="addCitizenBtn">➕ Добавить гражданина</button>`:'';
         let html=`<div class="citizens-panel"><div class="panel-header"><div class="search-box"><input type="text" id="citizenSearch" placeholder="🔍 Поиск..." value="${escapeHtml(currentSearchQuery)}"></div><div class="sort-buttons"><button class="sort-btn ${currentSort==='name_asc'?'active':''}" data-sort="name_asc">📋 По имени</button><button class="sort-btn ${currentSort==='activity_desc'?'active':''}" data-sort="activity_desc">⚡ Активность</button><button class="sort-btn ${currentSort==='joinDate_asc'?'active':''}" data-sort="joinDate_asc">📅 Дата вступления</button><button class="sort-btn ${currentSort==='powerStatus_asc'?'active':''}" data-sort="powerStatus_asc">💼 Работа</button><button class="sort-btn ${currentSort==='duty_asc'?'active':''}" data-sort="duty_asc">⚔️ Воинская обязанность</button></div>${addBtnHtml}</div>
-        <div style="overflow-x:auto;"><table id="citizensDynamicTable"><thead><tr><th>Гражданин</th><th>Дата вступления</th><th>Активность</th><th>Работа</th><th>Статус</th><th>Воинская обязанность</th>${isAdmin?'<th>Действия</th>':''} </thead><tbody></tbody>}</div><div id="paginationControls"></div><button class="back-button" id="backToMainBtn">← Назад</button></div>`;
+        <div style="overflow-x:auto;"><table id="citizensDynamicTable"><thead><tr><th>Гражданин</th><th>Дата вступления</th><th>Активность</th><th>Работа</th><th>Статус</th><th>Воинская обязанность</th>${isAdmin?'<th>Действия</th>':''}</tr></thead><tbody></tbody></table></div><div id="paginationControls"></div><button class="back-button" id="backToMainBtn">← Назад</button></div>`;
         dynamicPanel.innerHTML=html;
         updateSelects();
         refreshTableBodyOnly();
