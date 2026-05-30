@@ -6,6 +6,8 @@
     <title>SQD Squad | Гибкое администрирование | Кастомные диалоги</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* ФОН САЙТА (загружается после анимации) */
         body {
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -17,6 +19,40 @@
             position: relative;
             overflow-x: hidden;
         }
+        
+        /* Основной фоновый слой с изображением */
+        .site-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.discordapp.net/attachments/1508847431813566574/1510256511815782564/20e21b411203086c.jpg?ex=6a1c277b&is=6a1ad5fb&hm=acc9d84ce50d75012a03865ca9773fbba486c97432ebac6a901450c40d76a4d6&=&format=webp&width=1149&height=824');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        /* Затемнение для читаемости контента */
+        .site-background::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(1px);
+        }
+        
+        .site-background.visible {
+            opacity: 1;
+        }
+        
         .neon-rain {
             position: fixed;
             top: 0;
@@ -107,6 +143,8 @@
             border-radius: 48px;
             padding: 2rem 2rem 1.5rem 2rem;
             border: 1px solid rgba(45, 212, 191, 0.35);
+            position: relative;
+            z-index: 15;
         }
         .main-content.visible { opacity: 1; pointer-events: auto; }
         .center-stage { text-align: center; margin-bottom: 2rem; }
@@ -118,10 +156,11 @@
             background-clip: text;
             color: transparent;
             margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
         .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem; margin-bottom: 2rem; }
         .minimal-btn {
-            background: rgba(20, 28, 35, 0.8);
+            background: rgba(20, 28, 35, 0.85);
             backdrop-filter: blur(5px);
             border: 1.5px solid #2dd4bf;
             border-radius: 60px;
@@ -132,13 +171,13 @@
             cursor: pointer;
             transition: 0.25s;
         }
-        .minimal-btn:hover { background: rgba(45, 212, 191, 0.2); transform: translateY(-2px); box-shadow: 0 5px 12px rgba(45,212,191,0.2); }
+        .minimal-btn:hover { background: rgba(45, 212, 191, 0.25); transform: translateY(-2px); box-shadow: 0 5px 12px rgba(45,212,191,0.3); }
         .settings-btn {
-            background: rgba(251, 191, 36, 0.2);
+            background: rgba(251, 191, 36, 0.25);
             border: 1px solid #fbbf24;
             color: #fcd34d;
         }
-        .settings-btn:hover { background: rgba(251, 191, 36, 0.35); }
+        .settings-btn:hover { background: rgba(251, 191, 36, 0.4); }
         .citizens-panel, .events-panel, .settings-panel {
             background: rgba(12, 18, 24, 0.88);
             backdrop-filter: blur(8px);
@@ -405,6 +444,10 @@
     </style>
 </head>
 <body>
+
+<!-- Фоновое изображение -->
+<div class="site-background" id="siteBackground"></div>
+
 <div class="neon-rain" id="neonRainContainer"></div>
 <div class="admin-corner">
     <span>🔐 Админ-доступ</span>
@@ -683,7 +726,7 @@
         let tbody=document.querySelector('#citizensDynamicTable tbody');
         if(!tbody) return;
         tbody.innerHTML='';
-        if(paged.length===0){ tbody.innerHTML=`<td><td colspan="${isAdmin?8:7}" class="no-results">🚫 Граждане не найдены</td>`; }
+        if(paged.length===0){ tbody.innerHTML=`<tr><td colspan="${isAdmin?8:7}" class="no-results">🚫 Граждане не найдены</td>`; }
         else{
             paged.forEach(c=>{
                 let statusClass = getStatusClass(c.status);
@@ -771,7 +814,6 @@
     document.getElementById('modalCancelBtn').onclick=closeAddModal;
     window.onclick=(e)=>{ if(e.target===document.getElementById('addCitizenModal')) closeAddModal(); if(e.target===document.getElementById('editCitizenModal')) closeEditModal(); };
 
-    // Функция разблокировки событий
     function unlockEvents() {
         showConfirm("Разблокировка событий", "Вы хотите разблокировать доступ к событиям сквада для всех пользователей?", (ok) => {
             if(ok){
@@ -790,7 +832,6 @@
         if(window.currentPanel === 'events') renderEventsPanel();
     }
 
-    // Рендер событий (с проверкой блокировки)
     function renderEventsPanel(){
         let html = `<div class="events-panel">`;
         if(eventsLocked) {
@@ -823,7 +864,6 @@
         document.getElementById('backFromEventsBtn')?.addEventListener('click',()=>{ window.currentPanel=null; dynamicPanel.innerHTML=''; });
     }
 
-    // Управление словарями
     function renderSettingsPanel(){
         if(!isAdmin){ showAlert("Доступ только для администратора"); window.currentPanel=null; dynamicPanel.innerHTML=''; return; }
         let html = `<div class="settings-panel">
@@ -837,9 +877,9 @@
         </div>`;
         dynamicPanel.innerHTML = html;
         function renderLists() {
-            document.getElementById('statusesList').innerHTML = statuses.map((s)=>`<tr><td>${escapeHtml(s)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="status" data-value="${escapeHtml(s)}">✏️</button><button class="settings-delete-btn" data-type="status" data-value="${escapeHtml(s)}">🗑️</button></td></tr>`).join('');
-            document.getElementById('worksList').innerHTML = works.map((w)=>`<tr><td>${escapeHtml(w)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="work" data-value="${escapeHtml(w)}">✏️</button><button class="settings-delete-btn" data-type="work" data-value="${escapeHtml(w)}">🗑️</button></td></tr>`).join('');
-            document.getElementById('dutiesList').innerHTML = duties.map((d)=>`<tr><td>${escapeHtml(d)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="duty" data-value="${escapeHtml(d)}">✏️</button><button class="settings-delete-btn" data-type="duty" data-value="${escapeHtml(d)}">🗑️</button></td></tr>`).join('');
+            document.getElementById('statusesList').innerHTML = statuses.map((s)=>`<tr><td>${escapeHtml(s)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="status" data-value="${escapeHtml(s)}">✏️</button><button class="settings-delete-btn" data-type="status" data-value="${escapeHtml(s)}">🗑️</button></td>`).join('');
+            document.getElementById('worksList').innerHTML = works.map((w)=>`<tr><td>${escapeHtml(w)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="work" data-value="${escapeHtml(w)}">✏️</button><button class="settings-delete-btn" data-type="work" data-value="${escapeHtml(w)}">🗑️</button></td>`).join('');
+            document.getElementById('dutiesList').innerHTML = duties.map((d)=>`<tr><td>${escapeHtml(d)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="duty" data-value="${escapeHtml(d)}">✏️</button><button class="settings-delete-btn" data-type="duty" data-value="${escapeHtml(d)}">🗑️</button></td>`).join('');
             document.querySelectorAll('.settings-edit-btn').forEach(btn=>{ btn.onclick=()=> openDictEditModal(btn.dataset.type, btn.dataset.value); });
             document.querySelectorAll('.settings-delete-btn').forEach(btn=>{ btn.onclick=()=> deleteDictItem(btn.dataset.type, btn.dataset.value); });
         }
@@ -893,7 +933,7 @@
         currentPage=1;
         let addBtnHtml=isAdmin?`<button class="add-btn" id="addCitizenBtn">➕ Добавить гражданина</button>`:'';
         let html=`<div class="citizens-panel"><div class="panel-header"><div class="search-box"><input type="text" id="citizenSearch" placeholder="🔍 Поиск..." value="${escapeHtml(currentSearchQuery)}"></div><div class="sort-buttons"><button class="sort-btn ${currentSort==='name_asc'?'active':''}" data-sort="name_asc">📋 По имени</button><button class="sort-btn ${currentSort==='activity_desc'?'active':''}" data-sort="activity_desc">⚡ Активность</button><button class="sort-btn ${currentSort==='joinDate_asc'?'active':''}" data-sort="joinDate_asc">📅 Дата вступления</button><button class="sort-btn ${currentSort==='powerStatus_asc'?'active':''}" data-sort="powerStatus_asc">💼 Работа</button><button class="sort-btn ${currentSort==='duty_asc'?'active':''}" data-sort="duty_asc">⚔️ Воинская обязанность</button></div>${addBtnHtml}</div>
-        <div style="overflow-x:auto;"><table id="citizensDynamicTable"><thead><tr><th>Гражданин</th><th>Дата вступления</th><th>Активность</th><th>Работа</th><th>Статус</th><th>Воинская обязанность</th>${isAdmin?'<th>Действия</th>':''}</tr></thead><tbody></tbody></table></div><div id="paginationControls"></div><button class="back-button" id="backToMainBtn">← Назад</button></div>`;
+        <div style="overflow-x:auto;"><table id="citizensDynamicTable"><thead><tr><th>Гражданин</th><th>Дата вступления</th><th>Активность</th><th>Работа</th><th>Статус</th><th>Воинская обязанность</th>${isAdmin?'<th>Действия</th>':''} </thead><tbody></tbody>}</div><div id="paginationControls"></div><button class="back-button" id="backToMainBtn">← Назад</button></div>`;
         dynamicPanel.innerHTML=html;
         updateSelects();
         refreshTableBodyOnly();
@@ -908,7 +948,20 @@
     
     function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     
-    window.addEventListener('load',()=>{ mainContent.classList.remove('visible'); setTimeout(()=>{ heroScreen.classList.add('hide-hero'); setTimeout(()=>{ heroScreen.style.display='none'; mainContent.classList.add('visible'); },700); },1500); });
+    // Загрузка сайта с показом фона после анимации
+    window.addEventListener('load',()=>{
+        mainContent.classList.remove('visible');
+        setTimeout(()=>{
+            heroScreen.classList.add('hide-hero');
+            setTimeout(()=>{
+                heroScreen.style.display='none';
+                mainContent.classList.add('visible');
+                // Показываем фон после анимации
+                const bg = document.getElementById('siteBackground');
+                bg.classList.add('visible');
+            },700);
+        },1500);
+    });
 </script>
 </body>
 </html>
