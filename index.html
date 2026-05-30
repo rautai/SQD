@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Custom Squad | Администрирование | Черная обводка</title>
+    <title>Custom Squad | Полное управление</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* ГРАДИЕНТНЫЙ ФОН (желтый -> оранжевый сверху вниз) */
         body {
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -27,7 +26,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 10;
+            z-index: 5;
             overflow: hidden;
         }
         .neon-drop {
@@ -43,6 +42,7 @@
             0% { transform: translateY(-10vh) scale(1); opacity: 0.5; }
             100% { transform: translateY(110vh) scale(0.6); opacity: 0; }
         }
+        
         .admin-corner {
             position: fixed;
             bottom: 24px;
@@ -59,21 +59,24 @@
             font-size: 0.8rem;
             color: #ffffff;
             font-weight: 500;
-        }
-        .admin-btn {
-            background: transparent;
-            border: 2px solid #000000;
-            color: #000000;
-            padding: 5px 14px;
-            border-radius: 60px;
-            font-size: 0.7rem;
-            font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
-            background: rgba(255,255,255,0.2);
         }
-        .admin-btn:hover { background: rgba(0, 0, 0, 0.2); box-shadow: 0 0 5px rgba(0,0,0,0.3); }
-        .admin-status { font-size: 0.7rem; background: #00000022; padding: 4px 10px; border-radius: 40px; color: #000; font-weight: 600; }
+        .admin-corner:hover { background: rgba(0, 0, 0, 0.85); transform: scale(1.02); }
+        .admin-avatar {
+            width: 28px;
+            height: 28px;
+            background: #2dd4bf;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+        }
+        .admin-name { font-weight: 600; letter-spacing: 0.5px; }
+        .admin-status { font-size: 0.65rem; background: #00000044; padding: 3px 8px; border-radius: 40px; color: #fff; }
+        
         .fullscreen-hero {
             position: fixed;
             top: 0; left: 0;
@@ -100,10 +103,9 @@
         }
         @keyframes gentlePulse { 0% { opacity: 0; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
         
-        /* Основной контент: белый с прозрачностью 15% */
         .main-content {
             width: 100%;
-            max-width: 1500px;
+            max-width: 1400px;
             margin: 0 auto;
             opacity: 0;
             transition: opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
@@ -118,230 +120,370 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .main-content.visible { opacity: 1; pointer-events: auto; }
-        .center-stage { text-align: center; margin-bottom: 2rem; }
-        .site-title {
-            font-size: clamp(2rem, 7vw, 3.5rem);
-            font-weight: 700;
-            color: #000000;
+        
+        .hero-header {
+            position: relative;
+            text-align: center;
             margin-bottom: 2rem;
-            text-shadow: none;
+            border-radius: 32px;
+            overflow: hidden;
+            padding: 2rem;
         }
-        .button-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem; margin-bottom: 2rem; }
-        .minimal-btn {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-            border: 2px solid #000000;
-            border-radius: 60px;
-            padding: 0.8rem 2.2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://img.goodfon.ru/wallpaper/big/f/31/capitol-congress-usa.webp');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.25;
+            z-index: 0;
+            border-radius: 32px;
+        }
+        .hero-header h1 {
+            position: relative;
+            z-index: 1;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 800;
             color: #000000;
-            cursor: pointer;
-            transition: 0.25s;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
         }
-        .minimal-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
-        .settings-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid #000000;
-            color: #000000;
+        
+        .main-event {
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
         }
-        .settings-btn:hover { background: rgba(255, 255, 255, 0.5); }
-        .citizens-panel, .events-panel, .settings-panel {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
+        .main-event-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
             border-radius: 32px;
             border: 2px solid #000000;
-            padding: 1.6rem;
-        }
-        .events-panel {
-            text-align: center;
-            min-height: 300px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
+        }
+        .main-event-card:hover { transform: translateY(-5px); }
+        .main-event-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-bottom: 2px solid #000000;
+        }
+        .main-event-content { padding: 1.5rem; }
+        .main-event-title { font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 0.5rem; }
+        .main-event-desc { font-size: 0.95rem; color: #333; margin-bottom: 1.5rem; line-height: 1.5; }
+        
+        .action-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #000000;
+            border-radius: 60px;
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        .action-btn:hover { background: #000; transform: scale(1.02); }
+        
+        .story-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #000000;
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            display: inline-block;
+        }
+        .story-btn:hover { background: #000; transform: scale(1.02); }
+        
+        /* Модальные окна */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 10001;
             align-items: center;
             justify-content: center;
         }
-        .events-locked-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.6;
+        .modal-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 40px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 3px solid #000000;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
         }
-        .events-locked-text {
+        .modal-container.small { max-width: 600px; }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #000000;
+            background: rgba(255,245,200,0.5);
+        }
+        .modal-header h2 { font-size: 1.3rem; font-weight: 700; color: #000; }
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
             color: #000;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
         }
-        .unlock-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid #000000;
-            border-radius: 60px;
-            padding: 0.6rem 1.8rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #000000;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 1rem;
-        }
-        .unlock-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-        .panel-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .search-box input {
-            padding: 0.7rem 1rem;
-            border-radius: 60px;
-            border: 2px solid #000000;
-            background: rgba(255, 255, 255, 0.7);
-            color: #000000;
-            width: 260px;
-        }
-        .search-box input:focus { outline: none; border-color: #000000; box-shadow: 0 0 0 2px rgba(0,0,0,0.2); background: rgba(255,255,255,0.9); }
-        .sort-buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-        .sort-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid #000000;
-            border-radius: 40px;
-            padding: 0.45rem 1rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: #000000;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-        .sort-btn.active { border-color: #000000; background: rgba(0, 0, 0, 0.15); color: #000000; }
+        .modal-body { padding: 1.5rem; }
         
-        /* Кнопка добавления гражданина - в стиле minimal-btn */
-        .add-citizen-btn {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-            border: 2px solid #000000;
-            border-radius: 60px;
-            padding: 0.5rem 1.3rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #000000;
-            cursor: pointer;
-            transition: 0.25s;
+        .citizens-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        .add-citizen-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        .citizens-table th, .citizens-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            color: #000;
+            vertical-align: middle;
         }
-        
-        .settings-add-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid #000000;
-            border-radius: 60px;
-            padding: 0.5rem 1.3rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #000000;
-            cursor: pointer;
-            transition: 0.25s;
+        .citizens-table th {
+            background: rgba(0, 0, 0, 0.05);
+            font-weight: 700;
         }
-        .settings-add-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .edit-btn, .delete-btn, .settings-edit-btn, .settings-delete-btn {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 4px 12px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: 0.2s;
-            margin: 0 3px;
-        }
-        .edit-btn, .settings-edit-btn { border: 2px solid #fbbf24; color: #000000; }
-        .edit-btn:hover, .settings-edit-btn:hover { background: rgba(251, 191, 36, 0.4); }
-        .delete-btn, .settings-delete-btn { border: 2px solid #e53e3e; color: #000000; }
-        .delete-btn:hover, .settings-delete-btn:hover { background: rgba(229, 62, 62, 0.2); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.2); color: #000000; }
-        th { color: #000000; background: rgba(0, 0, 0, 0.05); font-weight: 700; }
-        .activity-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 60px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: 1px solid #00000022;
-        }
-        .activity-const { background: #0f5c4b33; color: #0f5c4b; }
-        .activity-active { background: #2b6e5a33; color: #2b6e5a; }
-        .activity-low { background: #7c5e2a33; color: #7c5e2a; }
-        .activity-inactive { background: #632c3c33; color: #632c3c; }
-        .status-badge, .duty-badge {
-            display: inline-block;
+        .badge {
+            background: #0f5c4b33;
             padding: 0.2rem 0.7rem;
             border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            border: 1px solid #00000022;
+            display: inline-block;
+            font-size: 0.75rem;
         }
-        .status-default { background: #2c4f5c33; color: #2c4f5c; }
-        .status-reserve { background: #7c5e2a33; color: #7c5e2a; }
-        .status-citizen { background: #2c4f5c33; color: #2c4f5c; }
-        .status-newbie { background: #314c5e33; color: #314c5e; }
-        .status-honor { background: #6e3e4233; color: #6e3e42; }
-        .status-active { background: #0f5c4b33; color: #0f5c4b; }
-        .name-with-nick { display: flex; flex-direction: column; }
-        .main-name { font-weight: 700; color: #000; }
-        .sub-nick { font-size: 0.7rem; color: #333; margin-top: 2px; }
-        .pagination-container { display: flex; justify-content: center; gap: 1rem; margin-top: 1.8rem; }
-        .page-btn {
-            background: rgba(255, 255, 255, 0.3);
+        .citizen-name-cell {
+            display: flex;
+            flex-direction: column;
+        }
+        .citizen-fullname { font-weight: 700; font-size: 1rem; }
+        .citizen-nicks { font-size: 0.7rem; color: #444; margin-top: 4px; }
+        .citizen-nicks span { display: inline-block; margin-right: 10px; }
+        
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .small-btn {
+            background: rgba(0, 0, 0, 0.7);
             border: 2px solid #000000;
             border-radius: 60px;
-            padding: 0.4rem 1.2rem;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
             cursor: pointer;
-            color: #000000;
-            transition: 0.2s;
-            font-weight: 500;
         }
-        .page-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.5); }
-        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .back-button { margin-top: 1.5rem; background: rgba(255, 255, 255, 0.3); border: 2px solid #000000; border-radius: 60px; padding: 0.45rem 1.8rem; cursor: pointer; color: #000000; transition: 0.2s; font-weight: 500; }
-        .back-button:hover { background: rgba(255, 255, 255, 0.5); }
+        .small-btn:hover { background: #000; }
+        .small-btn.edit { background: #fbbf24; color: #000; border-color: #000; }
+        .small-btn.delete { background: #e53e3e; }
         
-        .modal {
+        /* Админ-панель */
+        .admin-panel-modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
             z-index: 10000;
             align-items: center;
             justify-content: center;
         }
-        .modal-content {
+        .admin-panel-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 32px;
+            border-radius: 48px;
+            width: 90%;
+            max-width: 450px;
+            border: 3px solid #000000;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+            overflow: hidden;
+        }
+        .admin-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 2px solid #000000;
+            background: linear-gradient(135deg, #f5e050, #e67e22);
+        }
+        .admin-panel-header h2 { font-size: 1.4rem; font-weight: 700; color: #000; }
+        .admin-panel-close {
+            background: transparent;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #000;
+            padding: 0 8px;
+            transition: 0.2s;
+        }
+        .admin-panel-close:hover { transform: scale(1.1); }
+        .admin-panel-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .admin-panel-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #000000;
+            border-radius: 60px;
+            padding: 0.8rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            width: 100%;
+        }
+        .admin-panel-btn:hover { background: #000; transform: translateY(-2px); }
+        .admin-panel-btn.special { background: #2dd4bf; color: #000; }
+        .admin-panel-btn.danger { background: #e53e3e; }
+        
+        /* Форма добавления/редактирования гражданина */
+        .citizen-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .citizen-form input, .citizen-form select {
+            padding: 0.7rem;
+            border: 2px solid #000;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.9);
+            font-family: inherit;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .form-buttons button {
+            flex: 1;
+            padding: 0.7rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+        
+        /* Редактор тегов */
+        .tag-editor-section {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            padding-bottom: 1rem;
+        }
+        .tag-editor-section h3 {
+            margin-bottom: 0.8rem;
+            color: #000;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .tag-item {
+            background: rgba(0,0,0,0.1);
+            border: 1px solid #000;
+            border-radius: 40px;
+            padding: 0.3rem 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tag-item span { font-size: 0.85rem; }
+        .tag-item button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0 2px;
+        }
+        .add-tag-btn {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #000;
+            border-radius: 60px;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); z-index: 10002; align-items: center; justify-content: center; }
+        .modal-content { background: rgba(255, 255, 255, 0.95); border-radius: 40px; padding: 2rem; width: 90%; max-width: 500px; border: 3px solid #000; text-align: center; max-height: 80vh; overflow-y: auto; }
+        .modal-content img { width: 100%; border-radius: 24px; margin: 1rem 0; border: 2px solid #000; }
+        .modal-content input, .modal-content textarea { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border: 2px solid #000; border-radius: 20px; }
+        .modal-buttons { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+        .modal-buttons button { flex: 1; padding: 0.7rem; border-radius: 40px; cursor: pointer; font-weight: bold; border: none; }
+        
+        .admin-auth-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 10003;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-auth-card {
+            background: linear-gradient(145deg, rgba(255,245,200,0.98), rgba(255,235,170,0.98));
+            border-radius: 48px;
             padding: 2rem;
             width: 90%;
-            max-width: 500px;
-            border: 3px solid #000000;
-            color: #000000;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            max-width: 400px;
+            border: 3px solid #000;
+            text-align: center;
         }
-        .modal-content h3 { margin-bottom: 1rem; color: #000000; }
-        .modal-content input, .modal-content select {
+        .admin-auth-card h2 { font-size: 1.6rem; font-weight: 800; color: #000; }
+        .admin-auth-card input {
             width: 100%;
-            padding: 0.7rem;
-            margin: 0.5rem 0 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #000000;
-            border-radius: 20px;
-            color: #000000;
-            font-size: 0.9rem;
+            padding: 0.8rem;
+            margin: 0.6rem 0;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #000;
+            border-radius: 60px;
         }
-        .modal-buttons { display: flex; gap: 1rem; margin-top: 1.2rem; }
-        .modal-buttons button { flex: 1; padding: 0.7rem; border-radius: 40px; cursor: pointer; font-weight: bold; border: none; }
+        .admin-auth-card button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: #000;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+        }
+        .admin-auth-card .close-auth { background: transparent; border: 2px solid #000; color: #000; margin-top: 0.5rem; }
         
         .custom-dialog {
             display: none;
@@ -350,7 +492,7 @@
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.9);
             backdrop-filter: blur(12px);
-            z-index: 10002;
+            z-index: 10004;
             align-items: center;
             justify-content: center;
         }
@@ -360,194 +502,164 @@
             padding: 2rem;
             width: 90%;
             max-width: 380px;
-            border: 3px solid #000000;
+            border: 3px solid #000;
             text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.2);
         }
-        .dialog-card h3 { color: #000000; margin-bottom: 1rem; font-size: 1.3rem; }
-        .dialog-card p { color: #333; margin-bottom: 1.8rem; line-height: 1.4; }
-        .dialog-buttons { display: flex; gap: 1rem; }
-        .dialog-buttons button { flex: 1; padding: 0.7rem; border-radius: 60px; font-weight: 600; cursor: pointer; border: 2px solid #000000; transition: 0.2s; }
-        .dialog-confirm { background: #000000; color: white; }
-        .dialog-confirm:hover { background: #333333; transform: scale(1.02); }
-        .dialog-cancel { background: transparent; border: 2px solid #000000; color: #000000; }
-        .dialog-cancel:hover { background: rgba(0,0,0,0.1); }
-        
         .custom-toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: #000000;
-            border-left: 4px solid #000000;
+            background: #000;
             padding: 12px 24px;
             border-radius: 60px;
-            color: #ffffff;
-            font-size: 0.9rem;
-            z-index: 10003;
+            color: white;
+            z-index: 10005;
             opacity: 0;
             transition: all 0.3s ease;
             pointer-events: none;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
-        .admin-auth-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            z-index: 10001;
-            align-items: center;
-            justify-content: center;
+        @media (max-width: 800px) {
+            .citizens-table th, .citizens-table td { font-size: 0.7rem; padding: 8px 4px; }
+            .main-event-img { height: 200px; }
         }
-        .admin-auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 40px;
-            padding: 2rem;
-            width: 90%;
-            max-width: 400px;
-            border: 3px solid #000000;
-            text-align: center;
-        }
-        .admin-auth-card h2 { color: #000000; margin-bottom: 0.5rem; }
-        .admin-auth-card input {
-            width: 100%;
-            padding: 0.8rem;
-            margin: 0.7rem 0;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #000000;
-            border-radius: 60px;
-            color: #000000;
-        }
-        .admin-auth-card button {
-            width: 100%;
-            padding: 0.8rem;
-            margin-top: 1rem;
-            background: #000000;
-            border: none;
-            border-radius: 60px;
-            font-weight: 700;
-            cursor: pointer;
-            color: white;
-        }
-        .admin-auth-card .close-auth { background: transparent; border: 2px solid #000000; color: #000000; margin-top: 0.5rem; }
-        .settings-section { margin-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 1rem; }
-        .settings-section h3 { color: #000000; margin-bottom: 1rem; font-size: 1.2rem; }
-        .settings-table { width: 100%; margin-top: 0.5rem; }
-        .settings-table td { padding: 8px 6px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        @media (max-width: 900px) { .panel-header { flex-direction: column; align-items: stretch; } .sort-buttons { justify-content: center; } }
     </style>
 </head>
 <body>
 
 <div class="neon-rain" id="neonRainContainer"></div>
-<div class="admin-corner">
-    <span>🔐 Админ-доступ</span>
-    <button class="admin-btn" id="adminRegisterBtn">Войти</button>
+<div class="admin-corner" id="adminCornerBtn">
+    <div class="admin-avatar">👑</div>
+    <span class="admin-name" id="adminNameDisplay">Админ</span>
     <span class="admin-status" id="adminStatusText">Не авторизован</span>
 </div>
 <div class="fullscreen-hero" id="heroScreen"><div class="hero-title">Custom Squad</div></div>
 <div class="main-content" id="mainContent">
-    <div class="center-stage">
-        <h1 class="site-title">Custom Squad</h1>
-        <div class="button-group" id="buttonGroup">
-            <button class="minimal-btn" id="showCitizensBtn">Таблица граждан</button>
-            <button class="minimal-btn" id="showEventsBtn">События сквада</button>
-        </div>
-    </div>
     <div id="dynamicPanel"></div>
 </div>
 
-<!-- Кастомные диалоги -->
-<div id="customConfirmDialog" class="custom-dialog">
-    <div class="dialog-card">
-        <h3 id="dialogTitle">Подтверждение</h3>
-        <p id="dialogMessage">Вы уверены?</p>
-        <div class="dialog-buttons">
-            <button id="dialogConfirmBtn" class="dialog-confirm">Да</button>
-            <button id="dialogCancelBtn" class="dialog-cancel">Нет</button>
+<!-- Админ-панель -->
+<div id="adminPanelModal" class="admin-panel-modal">
+    <div class="admin-panel-container">
+        <div class="admin-panel-header">
+            <h2>👑 Панель администратора</h2>
+            <button class="admin-panel-close" onclick="closeAdminPanel()">✕</button>
+        </div>
+        <div class="admin-panel-body">
+            <button class="admin-panel-btn" onclick="openAddCitizenModal(); closeAdminPanel();">➕ Добавить гражданина</button>
+            <button class="admin-panel-btn" onclick="openTagEditorModal(); closeAdminPanel();">🏷️ Редактор тегов для таблицы граждан</button>
+            <button class="admin-panel-btn" onclick="openEventsManageModal(); closeAdminPanel();">📅 Управление событиями</button>
+            <button class="admin-panel-btn special" onclick="openAddEventModal(); closeAdminPanel();">➕ Добавить событие</button>
+            <button class="admin-panel-btn danger" id="logoutAdminBtn">🚪 Выйти из админки</button>
         </div>
     </div>
 </div>
 
-<div id="customAlertDialog" class="custom-dialog">
-    <div class="dialog-card" style="border-color:#000000;">
-        <h3 style="color:#000000;">Уведомление</h3>
-        <p id="alertMessage">Сообщение</p>
-        <div class="dialog-buttons">
-            <button id="alertOkBtn" class="dialog-confirm" style="background:#000000; color:white;">OK</button>
+<!-- Модалка с таблицей граждан (доступна всем) -->
+<div id="citizensModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>📋 Список граждан</h2>
+            <button class="modal-close" onclick="closeCitizensModal()">✕</button>
+        </div>
+        <div class="modal-body" id="citizensModalBody"></div>
+    </div>
+</div>
+
+<!-- Модалка для добавления/редактирования гражданина -->
+<div id="editCitizenModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 id="citizenModalTitle">✏️ Редактировать гражданина</h2>
+            <button class="modal-close" onclick="closeEditCitizenModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="citizen-form">
+                <input type="hidden" id="editCitizenId">
+                <input type="text" id="citizenFullName" placeholder="Имя и фамилия">
+                <input type="text" id="citizenMinecraft" placeholder="Minecraft ник">
+                <input type="text" id="citizenDiscord" placeholder="Discord ник">
+                <input type="date" id="citizenJoinDate">
+                <select id="citizenStatus"></select>
+                <select id="citizenPower"></select>
+                <select id="citizenActivity">
+                    <option value="Постоянный актив">Постоянный актив</option>
+                    <option value="Активный">Активный</option>
+                    <option value="Малоактивный">Малоактивный</option>
+                    <option value="Неактивный">Неактивный</option>
+                </select>
+                <select id="citizenDuty"></select>
+                <div class="form-buttons">
+                    <button id="saveCitizenBtn" style="background:#fbbf24;">Сохранить</button>
+                    <button onclick="closeEditCitizenModal()" style="background:#ccc;">Отмена</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Модалка редактора тегов -->
+<div id="tagEditorModal" class="modal-overlay">
+    <div class="modal-container small">
+        <div class="modal-header">
+            <h2>🏷️ Редактор тегов таблицы граждан</h2>
+            <button class="modal-close" onclick="closeTagEditorModal()">✕</button>
+        </div>
+        <div class="modal-body" id="tagEditorBody"></div>
+    </div>
+</div>
+
+<!-- Модалка для управления событиями -->
+<div id="eventsManageModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 700px;">
+        <div class="modal-header">
+            <h2>📅 Управление событиями</h2>
+            <button class="modal-close" onclick="closeEventsManageModal()">✕</button>
+        </div>
+        <div class="modal-body" id="eventsManageModalBody"></div>
+    </div>
+</div>
+
+<!-- Модалки для событий -->
+<div id="storyModal" class="modal"><div class="modal-content"><h3 id="storyModalTitle"></h3><img id="storyModalImage" src=""><p id="storyModalText"></p><div class="modal-buttons"><button id="closeStoryModalBtn" style="background:#000; color:white;">Закрыть</button></div></div></div>
+<div id="editEventModal" class="modal"><div class="modal-content"><h3>✏️ Редактировать событие</h3><input type="hidden" id="editEventId"><label>Название</label><input type="text" id="editEventName"><label>Краткое описание</label><textarea id="editEventDesc" rows="2"></textarea><label>Полная история</label><textarea id="editEventFullStory" rows="4"></textarea><label>URL изображения</label><input type="text" id="editEventImage"><div class="modal-buttons"><button id="saveEventBtn" style="background:#fbbf24;">Сохранить</button><button id="cancelEventBtn" style="background:#ccc;">Отмена</button><button id="deleteEventBtn" style="background:#e53e3e; color:white;">Удалить</button></div></div></div>
+<div id="addEventModal" class="modal"><div class="modal-content"><h3>➕ Добавить событие</h3><label>Название</label><input type="text" id="newEventName"><label>Краткое описание</label><textarea id="newEventDesc" rows="2"></textarea><label>Полная история</label><textarea id="newEventFullStory" rows="4"></textarea><label>URL изображения</label><input type="text" id="newEventImage"><div class="modal-buttons"><button id="confirmAddEventBtn" style="background:#2dd4bf;">Добавить</button><button id="cancelAddEventBtn" style="background:#ccc;">Отмена</button></div></div></div>
+
+<div id="customConfirmDialog" class="custom-dialog"><div class="dialog-card"><h3>Подтверждение</h3><p id="dialogMessage">Вы уверены?</p><div class="modal-buttons"><button id="dialogConfirmBtn" style="background:#000; color:white;">Да</button><button id="dialogCancelBtn">Нет</button></div></div></div>
+<div id="customAlertDialog" class="custom-dialog"><div class="dialog-card"><h3>Уведомление</h3><p id="alertMessage"></p><button id="alertOkBtn" style="background:#000; color:white;">OK</button></div></div>
+<div id="adminAuthModal" class="admin-auth-modal"><div class="admin-auth-card"><div class="lock-icon">🔐</div><h2>Вход администратора</h2><div class="auth-subtitle">Доступ к управлению сквадом</div><input type="text" id="adminLogin" placeholder="Логин"><input type="password" id="adminPassword" placeholder="Пароль"><button id="submitAdminAuth">Войти</button><button id="closeAdminAuth" class="close-auth">Отмена</button></div></div>
 <div id="toastMessage" class="custom-toast"></div>
 
-<!-- Модалки добавления/редактирования -->
-<div id="addCitizenModal" class="modal"><div class="modal-content"><h3>➕ Добавление гражданина</h3>
-    <input type="text" id="modalFullName" placeholder="Имя и фамилия"><input type="text" id="modalMinecraft" placeholder="Minecraft ник">
-    <input type="text" id="modalDiscord" placeholder="Discord ник"><input type="date" id="modalJoinDate">
-    <select id="modalStatus"></select><select id="modalPower"></select>
-    <select id="modalActivity"><option value="Постоянный актив">Постоянный актив</option><option value="Активный">Активный</option><option value="Малоактивный">Малоактивный</option><option value="Неактивный">Неактивный</option></select>
-    <select id="modalDuty"></select>
-    <div class="modal-buttons"><button id="modalConfirmBtn" style="background:#000000; color:white;">Добавить</button><button id="modalCancelBtn" style="background:#ccc;">Отмена</button></div>
-</div></div>
-
-<div id="editCitizenModal" class="modal"><div class="modal-content"><h3>✏️ Редактирование</h3>
-    <input type="hidden" id="editId"><input type="text" id="editFullName" placeholder="Имя"><input type="text" id="editMinecraft" placeholder="Minecraft">
-    <input type="text" id="editDiscord" placeholder="Discord"><input type="date" id="editJoinDate">
-    <select id="editStatus"></select><select id="editPower"></select>
-    <select id="editActivity"><option value="Постоянный актив">Постоянный актив</option><option value="Активный">Активный</option><option value="Малоактивный">Малоактивный</option><option value="Неактивный">Неактивный</option></select>
-    <select id="editDuty"></select>
-    <div class="modal-buttons"><button id="editConfirmBtn" style="background:#fbbf24;">Сохранить</button><button id="editCancelBtn" style="background:#ccc;">Отмена</button></div>
-</div></div>
-
-<div id="editDictModal" class="modal"><div class="modal-content"><h3 id="dictModalTitle">Добавление</h3>
-    <input type="hidden" id="dictType"><input type="hidden" id="dictOldValue"><input type="text" id="dictNewValue" placeholder="Новое значение">
-    <div class="modal-buttons"><button id="dictSaveBtn" style="background:#fbbf24;">Сохранить</button><button id="dictCancelBtn" style="background:#ccc;">Отмена</button></div>
-</div></div>
-
-<div id="adminAuthModal" class="admin-auth-modal"><div class="admin-auth-card"><h2>🔐 Вход администратора</h2>
-    <input type="text" id="adminLogin" placeholder="Логин"><input type="password" id="adminPassword" placeholder="Пароль">
-    <button id="submitAdminAuth">Войти</button><button id="closeAdminAuth" class="close-auth">Отмена</button>
-</div></div>
-
 <script>
-    // ========== КАСТОМНЫЕ ДИАЛОГИ ==========
+    // ========== ДИАЛОГИ ==========
     let pendingConfirmCallback = null;
-    function showConfirm(title, message, onConfirm) {
-        const dialog = document.getElementById('customConfirmDialog');
-        document.getElementById('dialogTitle').innerText = title;
-        document.getElementById('dialogMessage').innerHTML = message;
-        pendingConfirmCallback = onConfirm;
-        dialog.style.display = 'flex';
+    function showConfirm(title, message, onConfirm) { 
+        document.getElementById('dialogMessage').innerHTML = message; 
+        pendingConfirmCallback = onConfirm; 
+        document.getElementById('customConfirmDialog').style.display = 'flex'; 
     }
     function closeConfirm() { document.getElementById('customConfirmDialog').style.display = 'none'; pendingConfirmCallback = null; }
     function showAlert(message) { document.getElementById('alertMessage').innerHTML = message; document.getElementById('customAlertDialog').style.display = 'flex'; }
     function closeAlert() { document.getElementById('customAlertDialog').style.display = 'none'; }
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toastMessage');
-        toast.innerText = message;
-        toast.style.borderLeftColor = isError ? '#e53e3e' : '#000000';
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(20px)'; }, 2500);
+    function showToast(message) { 
+        const toast = document.getElementById('toastMessage'); 
+        toast.innerText = message; 
+        toast.style.opacity = '1'; 
+        toast.style.transform = 'translateX(-50%) translateY(0)'; 
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(20px)'; }, 2500); 
     }
     document.getElementById('dialogConfirmBtn').onclick = () => { if(pendingConfirmCallback) pendingConfirmCallback(true); closeConfirm(); };
     document.getElementById('dialogCancelBtn').onclick = () => { if(pendingConfirmCallback) pendingConfirmCallback(false); closeConfirm(); };
     document.getElementById('alertOkBtn').onclick = closeAlert;
     
-    // Неоновый дождь
-    (function initRain() {
-        const rc = document.getElementById('neonRainContainer');
+    // Неон
+    (function initRain() { 
+        const rc = document.getElementById('neonRainContainer'); 
         for(let i=0;i<100;i++){ let d=document.createElement('div'); d.classList.add('neon-drop'); let s=Math.random()*4+1.2;
-        d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*5+2.5}s;animation-delay:${Math.random()*10}s`;
-        rc.appendChild(d); }
+        d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*5+2.5}s;animation-delay:${Math.random()*10}s`; rc.appendChild(d); }
     })();
-
+    
     // Шифрование для админа
     const ENC_KEY = 0x5A;
     function encrypt(s){ let r=''; for(let i=0;i<s.length;i++) r+=String.fromCharCode(s.charCodeAt(i)^ENC_KEY); return r; }
@@ -555,301 +667,580 @@
     const ENC_LOGIN = encrypt("Adminchik");
     const ENC_PASS = encrypt("qweqwe123123");
     function isMasterAdmin(login,pwd){ return login===decrypt(ENC_LOGIN) && pwd===decrypt(ENC_PASS); }
-
-    // Словари
-    let statuses = ["В резерве", "Гражданин", "Новичок", "Почётный", "Грин-карта"];
-    let works = ["Советник", "Капитан", "Мастер", "Лейтенант", "Страж", "Рядовой", "Кандидат"];
-    let duties = ["военнообязанный", "Отстранен"];
     
-    let eventsLocked = localStorage.getItem('sqd_events_locked') !== 'false';
-    function saveEventsLocked() { localStorage.setItem('sqd_events_locked', eventsLocked); }
-    function saveDictionaries() {
-        localStorage.setItem('sqd_statuses', JSON.stringify(statuses));
-        localStorage.setItem('sqd_works', JSON.stringify(works));
-        localStorage.setItem('sqd_duties', JSON.stringify(duties));
-    }
-    function loadDictionaries() {
-        const savedStatuses = localStorage.getItem('sqd_statuses');
-        const savedWorks = localStorage.getItem('sqd_works');
-        const savedDuties = localStorage.getItem('sqd_duties');
-        const savedEventsLocked = localStorage.getItem('sqd_events_locked');
-        if(savedStatuses) statuses = JSON.parse(savedStatuses);
-        if(savedWorks) works = JSON.parse(savedWorks);
-        if(savedDuties) duties = JSON.parse(savedDuties);
-        if(savedEventsLocked !== null) eventsLocked = savedEventsLocked === 'true';
-    }
-    loadDictionaries();
-
-    function getStatusClass(status) {
-        const colorMap = { "В резерве": "status-reserve", "Гражданин": "status-citizen", "Новичок": "status-newbie", "Почётный": "status-honor", "Грин-карта": "status-active" };
-        return colorMap[status] || "status-default";
-    }
-
+    // Данные событий
+    let eventsData = [
+        { id:1, image:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/White_House_Washington_Monument.jpg/800px-White_House_Washington_Monument.jpg", title:"Белый дом", description:"Официальная резиденция президента США", fullStory:"Белый дом расположен в Вашингтоне, округ Колумбия. Построен в 1800 году." },
+        { id:2, image:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/U.S._Capitol_building_2.jpg/800px-U.S._Capitol_building_2.jpg", title:"Капитолий", description:"Место заседаний Конгресса США", fullStory:"Капитолий построен в 1800 году. Здесь работают Сенат и Палата представителей." },
+        { id:3, image:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Lincoln_Memorial_%2831137553197%29.jpg/800px-Lincoln_Memorial_%2831137553197%29.jpg", title:"Мемориал Линкольна", description:"В честь 16-го президента США", fullStory:"Мемориал открыт в 1922 году. Внутри находится статуя Линкольна." },
+        { id:4, image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Statue_of_Liberty_7.jpg/800px-Statue_of_Liberty_7.jpg", title:"Статуя Свободы", description:"Подарок Франции", fullStory:"Установлена в 1886 году на острове Свободы." }
+    ];
+    let nextEventId = 5;
+    function saveEvents() { localStorage.setItem('custom_squad_events', JSON.stringify(eventsData)); }
+    function loadEvents() { const saved = localStorage.getItem('custom_squad_events'); if(saved) { eventsData = JSON.parse(saved); nextEventId = Math.max(...eventsData.map(e=>e.id), 0) + 1; } }
+    loadEvents();
+    
+    // Данные граждан
     let citizensData = [
         { id:1, fullName:"Алексей Морозов", minecraft:"AlexM", discord:"alex_m#2210", joinDate:"2024-01-15", status:"Грин-карта", powerStatus:"Мастер", activity:"Постоянный актив", militaryDuty:"военнообязанный" },
         { id:2, fullName:"Екатерина Ветрова", minecraft:"KateWind", discord:"kate_v#4782", joinDate:"2024-02-20", status:"В резерве", powerStatus:"Рядовой", activity:"Малоактивный", militaryDuty:"Отстранен" },
         { id:3, fullName:"Дмитрий Соколов", minecraft:"DimaSokol", discord:"dima_s#5560", joinDate:"2023-11-10", status:"Гражданин", powerStatus:"Страж", activity:"Активный", militaryDuty:"военнообязанный" },
         { id:4, fullName:"София Кузнецова", minecraft:"SofiaK", discord:"sofi_kz#9081", joinDate:"2025-03-01", status:"Новичок", powerStatus:"Кандидат", activity:"Неактивный", militaryDuty:"Отстранен" },
-        { id:5, fullName:"Игорь Павлов", minecraft:"IgorPav", discord:"pav_igor#1123", joinDate:"2023-08-22", status:"Почётный", powerStatus:"Советник", activity:"Постоянный актив", militaryDuty:"военнообязанный" },
-        { id:6, fullName:"Владимир Тихонов", minecraft:"VladT", discord:"v_tih#9987", joinDate:"2024-05-12", status:"Грин-карта", powerStatus:"Лейтенант", activity:"Активный", militaryDuty:"военнообязанный" },
-        { id:7, fullName:"Анна Смирнова", minecraft:"AnnSmir", discord:"ann_s#4532", joinDate:"2024-09-04", status:"Гражданин", powerStatus:"Рядовой", activity:"Малоактивный", militaryDuty:"Отстранен" },
-        { id:8, fullName:"Максим Орлов", minecraft:"MaxOrl", discord:"orl_max#7765", joinDate:"2025-01-18", status:"В резерве", powerStatus:"Кандидат", activity:"Неактивный", militaryDuty:"Отстранен" },
-        { id:9, fullName:"Наталья Белова", minecraft:"NatBel", discord:"bel_n#3410", joinDate:"2023-12-01", status:"Грин-карта", powerStatus:"Капитан", activity:"Постоянный актив", militaryDuty:"военнообязанный" },
-        { id:10, fullName:"Глеб Романов", minecraft:"GlebRom", discord:"roman_g#2098", joinDate:"2023-06-30", status:"Почётный", powerStatus:"Советник", activity:"Активный", militaryDuty:"военнообязанный" },
-        { id:11, fullName:"Джеймс Уокер", minecraft:"JamesW", discord:"jwalker#5501", joinDate:"2024-07-19", status:"Грин-карта", powerStatus:"Страж", activity:"Активный", militaryDuty:"военнообязанный" },
-        { id:12, fullName:"Лиам Нэш", minecraft:"LiamN", discord:"liam_nash#9002", joinDate:"2025-02-10", status:"Новичок", powerStatus:"Кандидат", activity:"Неактивный", militaryDuty:"Отстранен" },
-        { id:13, fullName:"Оливия Беннет", minecraft:"OliveB", discord:"olivia_b#6723", joinDate:"2024-03-14", status:"Грин-карта", powerStatus:"Лейтенант", activity:"Постоянный актив", militaryDuty:"военнообязанный" },
-        { id:14, fullName:"Иван Красов", minecraft:"IvanKras", discord:"kras_iv#4521", joinDate:"2024-11-01", status:"В резерве", powerStatus:"Рядовой", activity:"Малоактивный", militaryDuty:"Отстранен" },
-        { id:15, fullName:"Мария Львова", minecraft:"MariLv", discord:"lvova_m#8765", joinDate:"2024-08-17", status:"Гражданин", powerStatus:"Страж", activity:"Активный", militaryDuty:"военнообязанный" }
+        { id:5, fullName:"Игорь Павлов", minecraft:"IgorPav", discord:"pav_igor#1123", joinDate:"2023-08-22", status:"Почётный", powerStatus:"Советник", activity:"Постоянный актив", militaryDuty:"военнообязанный" }
     ];
-    let nextId = 16;
-    const eventsData = [
-        { title:"Тактическая тренировка", date:"15 мая 2025", desc:"Сбор на полигоне в 19:00" },
-        { title:"Сбор отряда «Красный рубеж»", date:"22 мая 2025", desc:"Обсуждение стратегии" },
-        { title:"Кибербезопасность лекция", date:"30 мая 2025", desc:"Zoom-конференция" }
-    ];
-
-    let isAdmin = localStorage.getItem('sqd_admin') === 'true';
-    function updateSettingsButtonVisibility() {
-        const buttonGroup = document.getElementById('buttonGroup');
-        const existingSettingsBtn = document.getElementById('showSettingsBtn');
-        if(isAdmin && !existingSettingsBtn) {
-            const settingsBtn = document.createElement('button');
-            settingsBtn.id = 'showSettingsBtn';
-            settingsBtn.className = 'minimal-btn settings-btn';
-            settingsBtn.innerHTML = '⚙️ Управление словарями';
-            settingsBtn.onclick = () => { window.currentPanel = 'settings'; renderSettingsPanel(); };
-            buttonGroup.appendChild(settingsBtn);
-        } else if(!isAdmin && existingSettingsBtn) { existingSettingsBtn.remove(); }
-    }
-    function updateAdminUI(){ 
-        let st=document.getElementById('adminStatusText'), btn=document.getElementById('adminRegisterBtn');
-        if(isAdmin){ st.innerText='✅ Администратор'; st.style.color='#000'; btn.innerText='Выйти'; }
-        else{ st.innerText='🔒 Не авторизован'; st.style.color='#000'; btn.innerText='Войти'; }
-        updateSettingsButtonVisibility();
-    }
-    document.getElementById('adminRegisterBtn').onclick=()=>{
-        if(isAdmin){ showConfirm("Выход", "Вы действительно хотите выйти из режима администратора?", (ok) => { if(ok){ localStorage.setItem('sqd_admin','false'); isAdmin=false; updateAdminUI(); if(window.currentPanel==='citizens') refreshTableBodyOnly(); else if(window.currentPanel==='settings') dynamicPanel.innerHTML=''; window.currentPanel=null; showToast("Вы вышли из режима администратора"); } }); }
-        else document.getElementById('adminAuthModal').style.display='flex';
-    };
-    document.getElementById('submitAdminAuth').onclick=()=>{
-        let l=document.getElementById('adminLogin').value.trim(), p=document.getElementById('adminPassword').value.trim();
-        if(!l||!p) showAlert("Заполните все поля!");
-        else if(isMasterAdmin(l,p)){ localStorage.setItem('sqd_admin','true'); isAdmin=true; showToast(`Добро пожаловать, ${l}!`); closeAdminModal(); updateAdminUI(); if(window.currentPanel==='citizens') refreshTableBodyOnly(); }
-        else showAlert("Неверный логин или пароль!");
-    };
-    function closeAdminModal(){ document.getElementById('adminAuthModal').style.display='none'; }
-    document.getElementById('closeAdminAuth').onclick=closeAdminModal;
-    window.onclick=(e)=>{ if(e.target===document.getElementById('adminAuthModal')) closeAdminModal(); };
-    updateAdminUI();
-
-    function updateSelects() {
-        ['modalStatus', 'editStatus'].forEach(id => { const sel = document.getElementById(id); if(sel) sel.innerHTML = statuses.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join(''); });
-        ['modalPower', 'editPower'].forEach(id => { const sel = document.getElementById(id); if(sel) sel.innerHTML = works.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join(''); });
-        ['modalDuty', 'editDuty'].forEach(id => { const sel = document.getElementById(id); if(sel) sel.innerHTML = duties.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join(''); });
-    }
+    let nextCitizenId = 6;
     
-    let currentSort="name_asc", currentSearchQuery="", currentPage=1;
-    const ITEMS_PER_PAGE=10;
-    window.currentPanel=null;
-
-    function getActivityClass(act){
-        if(act==="Постоянный актив") return "activity-const";
-        if(act==="Активный") return "activity-active";
-        if(act==="Малоактивный") return "activity-low";
-        return "activity-inactive";
-    }
-    function formatDate(d){ return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}); }
-    function sortCitizens(arr,type){
-        let copy=[...arr];
-        if(type==='name_asc') copy.sort((a,b)=>a.fullName.localeCompare(b.fullName,'ru'));
-        if(type==='activity_desc'){ const order={"Постоянный актив":1,"Активный":2,"Малоактивный":3,"Неактивный":4}; copy.sort((a,b)=>(order[a.activity]||5)-(order[b.activity]||5)); }
-        if(type==='joinDate_asc') copy.sort((a,b)=>new Date(a.joinDate)-new Date(b.joinDate));
-        if(type==='powerStatus_asc'){ const ord={}; works.forEach((w,idx)=>ord[w]=idx); copy.sort((a,b)=>(ord[a.powerStatus]||999)-(ord[b.powerStatus]||999)); }
-        if(type==='duty_asc'){ const ord={}; duties.forEach((d,idx)=>ord[d]=idx); copy.sort((a,b)=>(ord[a.militaryDuty]||999)-(ord[b.militaryDuty]||999)); }
-        return copy;
-    }
-    function filterCitizens(arr,q){ if(!q.trim()) return arr; let low=q.toLowerCase(); return arr.filter(c=>c.fullName.toLowerCase().includes(low)||c.minecraft.toLowerCase().includes(low)||c.discord.toLowerCase().includes(low)); }
-    function refreshTableBodyOnly(){
-        if(window.currentPanel!=='citizens') return;
-        let filtered=filterCitizens(citizensData,currentSearchQuery);
-        let sorted=sortCitizens(filtered,currentSort);
-        let totalPages=Math.ceil(sorted.length/ITEMS_PER_PAGE);
-        if(currentPage>totalPages) currentPage=Math.max(1,totalPages);
-        let start=(currentPage-1)*ITEMS_PER_PAGE;
-        let paged=sorted.slice(start,start+ITEMS_PER_PAGE);
-        let tbody=document.querySelector('#citizensDynamicTable tbody');
-        if(!tbody) return;
-        tbody.innerHTML='';
-        if(paged.length===0){ tbody.innerHTML=`<tr><td colspan="${isAdmin?8:7}" class="no-results">🚫 Граждане не найдены</td>`; }
-        else{
-            paged.forEach(c=>{
-                let statusClass = getStatusClass(c.status);
-                let row=tbody.insertRow();
-                row.insertCell(0).innerHTML=`<div class="name-with-nick"><span class="main-name">${escapeHtml(c.fullName)}${isAdmin?' <span style="color:#000;font-size:0.7rem;">👑</span>':''}</span><span class="sub-nick">🎮 ${escapeHtml(c.minecraft)} • 💬 ${escapeHtml(c.discord)}</span></div>`;
-                row.insertCell(1).innerHTML=formatDate(c.joinDate);
-                row.insertCell(2).innerHTML=`<div class="activity-badge ${getActivityClass(c.activity)}">${escapeHtml(c.activity)}</div>`;
-                row.insertCell(3).innerHTML=escapeHtml(c.powerStatus);
-                row.insertCell(4).innerHTML=`<span class="status-badge ${statusClass}">${escapeHtml(c.status)}</span>`;
-                row.insertCell(5).innerHTML=`<span class="duty-badge" style="${c.militaryDuty==='Отстранен'?'background:#5c3a3a33;':'background:#1e4d6b33;'} padding:0.2rem 0.7rem; border-radius:40px;">${escapeHtml(c.militaryDuty)}</span>`;
-                if(isAdmin){
-                    let actions=document.createElement('div');
-                    let editBtn=document.createElement('button'); editBtn.innerText='✏️ Изменить'; editBtn.className='edit-btn';
-                    let delBtn=document.createElement('button'); delBtn.innerText='🗑️ Удалить'; delBtn.className='delete-btn';
-                    editBtn.onclick=()=>openEditModal(c);
-                    delBtn.onclick=()=>{ showConfirm("Удаление", `Удалить гражданина "${c.fullName}"?`, (ok) => { if(ok){ citizensData=citizensData.filter(cit=>cit.id!==c.id); refreshTableBodyOnly(); showToast(`Гражданин ${c.fullName} удален`); } }); };
-                    actions.appendChild(editBtn); actions.appendChild(delBtn);
-                    row.insertCell(6).appendChild(actions);
-                }
-            });
-        }
-        let pagDiv=document.querySelector('#paginationControls');
-        if(pagDiv && totalPages>1){
-            pagDiv.innerHTML=`<div class="pagination-container"><button class="page-btn" id="prevPageBtn" ${currentPage===1?'disabled':''}>◀ Назад</button><span class="page-info">${currentPage} / ${totalPages}</span><button class="page-btn" id="nextPageBtn" ${currentPage===totalPages?'disabled':''}>Вперед ▶</button></div>`;
-            document.getElementById('prevPageBtn')?.addEventListener('click',()=>{ if(currentPage>1){ currentPage--; refreshTableBodyOnly(); } });
-            document.getElementById('nextPageBtn')?.addEventListener('click',()=>{ if(currentPage<totalPages){ currentPage++; refreshTableBodyOnly(); } });
-        } else if(pagDiv) pagDiv.innerHTML='';
-    }
-
-    function openEditModal(citizen){
-        document.getElementById('editId').value=citizen.id;
-        document.getElementById('editFullName').value=citizen.fullName;
-        document.getElementById('editMinecraft').value=citizen.minecraft;
-        document.getElementById('editDiscord').value=citizen.discord;
-        document.getElementById('editJoinDate').value=citizen.joinDate;
-        document.getElementById('editStatus').value=citizen.status;
-        document.getElementById('editPower').value=citizen.powerStatus;
-        document.getElementById('editActivity').value=citizen.activity;
-        document.getElementById('editDuty').value=citizen.militaryDuty;
-        document.getElementById('editCitizenModal').style.display='flex';
-    }
-    function closeEditModal(){ document.getElementById('editCitizenModal').style.display='none'; }
-    document.getElementById('editConfirmBtn').onclick=()=>{
-        let id=parseInt(document.getElementById('editId').value);
-        let idx=citizensData.findIndex(c=>c.id===id);
-        if(idx!==-1){
-            citizensData[idx]={ id:id, fullName:document.getElementById('editFullName').value.trim(), minecraft:document.getElementById('editMinecraft').value.trim(),
-                discord:document.getElementById('editDiscord').value.trim(), joinDate:document.getElementById('editJoinDate').value,
-                status:document.getElementById('editStatus').value, powerStatus:document.getElementById('editPower').value,
-                activity:document.getElementById('editActivity').value, militaryDuty:document.getElementById('editDuty').value };
-            closeEditModal(); refreshTableBodyOnly(); showToast("Данные обновлены");
-        }
-    };
-    document.getElementById('editCancelBtn').onclick=closeEditModal;
-
-    function openAddModal(){
-        if(!isAdmin){ showAlert("Только администратор может добавлять граждан"); return; }
-        document.getElementById('modalFullName').value=''; document.getElementById('modalMinecraft').value='';
-        document.getElementById('modalDiscord').value=''; document.getElementById('modalJoinDate').value=new Date().toISOString().slice(0,10);
-        document.getElementById('modalStatus').value=statuses[0]; document.getElementById('modalPower').value=works[0];
-        document.getElementById('modalActivity').value='Активный'; document.getElementById('modalDuty').value=duties[0];
-        document.getElementById('addCitizenModal').style.display='flex';
-    }
-    function closeAddModal(){ document.getElementById('addCitizenModal').style.display='none'; }
-    document.getElementById('modalConfirmBtn').onclick=()=>{
-        let fullName=document.getElementById('modalFullName').value.trim(), minecraft=document.getElementById('modalMinecraft').value.trim(), discord=document.getElementById('modalDiscord').value.trim();
-        let joinDate=document.getElementById('modalJoinDate').value, status=document.getElementById('modalStatus').value, power=document.getElementById('modalPower').value;
-        let activity=document.getElementById('modalActivity').value, duty=document.getElementById('modalDuty').value;
-        if(!fullName||!minecraft||!discord||!joinDate){ showAlert("Заполните все поля!"); return; }
-        citizensData.push({ id:nextId++, fullName, minecraft, discord, joinDate, status, powerStatus:power, activity, militaryDuty:duty });
-        closeAddModal(); currentPage=Math.ceil(citizensData.length/ITEMS_PER_PAGE); refreshTableBodyOnly(); showToast(`Гражданин ${fullName} добавлен`);
-    };
-    document.getElementById('modalCancelBtn').onclick=closeAddModal;
-    window.onclick=(e)=>{ if(e.target===document.getElementById('addCitizenModal')) closeAddModal(); if(e.target===document.getElementById('editCitizenModal')) closeEditModal(); };
-
-    function unlockEvents() { showConfirm("Разблокировка", "Разблокировать события?", (ok) => { if(ok){ eventsLocked=false; saveEventsLocked(); showToast("События разблокированы!"); if(window.currentPanel==='events') renderEventsPanel(); } }); }
-    function lockEvents() { eventsLocked=true; saveEventsLocked(); showToast("События заблокированы!"); if(window.currentPanel==='events') renderEventsPanel(); }
-    function renderEventsPanel(){
-        let html = `<div class="events-panel">`;
-        if(eventsLocked) {
-            html += `<div class="events-locked-icon">🔒</div><div class="events-locked-text">События сквада заблокированы администрацией</div>`;
-            if(isAdmin) html += `<button class="unlock-btn" id="unlockEventsBtn">🔓 Разблокировать</button>`;
-        } else {
-            html += `<h3 style="margin-bottom:1rem;">🗓️ События сквада</h3><div class="events-list">`;
-            eventsData.forEach(e=>{ html+=`<div class="event-item" style="padding:0.9rem;border-left:4px solid #000;background:rgba(0,0,0,0.05);border-radius:20px;margin-bottom:0.7rem;"><strong>${escapeHtml(e.title)}</strong><br><span style="color:#e67e22;">📅 ${escapeHtml(e.date)}</span><p>${escapeHtml(e.desc)}</p></div>`; });
-            if(isAdmin) html += `<button class="unlock-btn" id="lockEventsBtn" style="border-color:#000;">🔒 Заблокировать</button>`;
-            html += `</div>`;
-        }
-        html += `<button class="back-button" id="backFromEventsBtn">← Назад</button></div>`;
-        dynamicPanel.innerHTML = html;
-        if(isAdmin) { if(eventsLocked) document.getElementById('unlockEventsBtn')?.addEventListener('click', unlockEvents); else document.getElementById('lockEventsBtn')?.addEventListener('click', lockEvents); }
-        document.getElementById('backFromEventsBtn')?.addEventListener('click',()=>{ window.currentPanel=null; dynamicPanel.innerHTML=''; });
-    }
-
-    function renderSettingsPanel(){
-        if(!isAdmin){ showAlert("Доступ только для администратора"); window.currentPanel=null; dynamicPanel.innerHTML=''; return; }
-        let html = `<div class="settings-panel"><div class="settings-section"><h3>📋 Статусы граждан</h3><div class="flex-between"><span>Список доступных статусов</span><button class="settings-add-btn" id="addStatusBtn">+ Добавить статус</button></div>
-        <table class="settings-table"><tbody id="statusesList"></tbody></table></div><div class="settings-section"><h3>💼 Работы / Должности</h3><div class="flex-between"><span>Список работ</span><button class="settings-add-btn" id="addWorkBtn">+ Добавить работу</button></div>
-        <table class="settings-table"><tbody id="worksList"></tbody></table></div><div class="settings-section"><h3>⚔️ Воинская обязанность</h3><div class="flex-between"><span>Список статусов</span><button class="settings-add-btn" id="addDutyBtn">+ Добавить статус</button></div>
-        <table class="settings-table"><tbody id="dutiesList"></tbody></tr></div><button class="back-button" id="settingsBackBtn">← Назад</button></div>`;
-        dynamicPanel.innerHTML = html;
-        function renderLists() {
-            document.getElementById('statusesList').innerHTML = statuses.map(s=>`<tr><td>${escapeHtml(s)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="status" data-value="${escapeHtml(s)}">✏️</button><button class="settings-delete-btn" data-type="status" data-value="${escapeHtml(s)}">🗑️</button></td>`).join('');
-            document.getElementById('worksList').innerHTML = works.map(w=>`<tr><td>${escapeHtml(w)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="work" data-value="${escapeHtml(w)}">✏️</button><button class="settings-delete-btn" data-type="work" data-value="${escapeHtml(w)}">🗑️</button></td>`).join('');
-            document.getElementById('dutiesList').innerHTML = duties.map(d=>`<tr><td>${escapeHtml(d)}</td><td style="text-align:right;"><button class="settings-edit-btn" data-type="duty" data-value="${escapeHtml(d)}">✏️</button><button class="settings-delete-btn" data-type="duty" data-value="${escapeHtml(d)}">🗑️</button></td>`).join('');
-            document.querySelectorAll('.settings-edit-btn').forEach(btn=>{ btn.onclick=()=> openDictEditModal(btn.dataset.type, btn.dataset.value); });
-            document.querySelectorAll('.settings-delete-btn').forEach(btn=>{ btn.onclick=()=> deleteDictItem(btn.dataset.type, btn.dataset.value); });
-        }
-        function openDictEditModal(type, oldValue){
-            document.getElementById('dictType').value=type; document.getElementById('dictOldValue').value=oldValue;
-            document.getElementById('dictNewValue').value=oldValue;
-            document.getElementById('dictModalTitle').innerText = type==='status'?'✏️ Редактировать статус':(type==='work'?'✏️ Редактировать работу':'✏️ Редактировать обязанность');
-            document.getElementById('editDictModal').style.display='flex';
-        }
-        function deleteDictItem(type, value){
-            let msg = type==='status'?`Удалить статус "${value}"?`:(type==='work'?`Удалить работу "${value}"?`:`Удалить статус "${value}"?`);
-            if((type==='status' && statuses.length<=1) || (type==='work' && works.length<=1) || (type==='duty' && duties.length<=1)){ showAlert("Нельзя удалить последний элемент!"); return; }
-            showConfirm("Подтверждение", msg, (ok) => {
-                if(ok){
-                    if(type==='status'){ const newArr = statuses.filter(s=>s!==value); citizensData.forEach(c=>{ if(c.status===value) c.status=newArr[0]; }); statuses.length=0; statuses.push(...newArr); }
-                    else if(type==='work'){ const newArr = works.filter(w=>w!==value); citizensData.forEach(c=>{ if(c.powerStatus===value) c.powerStatus=newArr[0]; }); works.length=0; works.push(...newArr); }
-                    else if(type==='duty'){ const newArr = duties.filter(d=>d!==value); citizensData.forEach(c=>{ if(c.militaryDuty===value) c.militaryDuty=newArr[0]; }); duties.length=0; duties.push(...newArr); }
-                    saveDictionaries(); updateSelects(); renderLists(); refreshTableBodyOnly(); showToast("Элемент удален");
-                }
-            });
-        }
-        document.getElementById('addStatusBtn').onclick=()=>{ let newVal = prompt("Введите новый статус:"); if(newVal && newVal.trim() && !statuses.includes(newVal.trim())){ statuses.push(newVal.trim()); saveDictionaries(); updateSelects(); renderLists(); refreshTableBodyOnly(); showToast(`Статус "${newVal}" добавлен`); } else if(statuses.includes(newVal)) showAlert("Такой статус уже существует!"); };
-        document.getElementById('addWorkBtn').onclick=()=>{ let newVal = prompt("Введите новую работу:"); if(newVal && newVal.trim() && !works.includes(newVal.trim())){ works.push(newVal.trim()); saveDictionaries(); updateSelects(); renderLists(); refreshTableBodyOnly(); showToast(`Работа "${newVal}" добавлена`); } else if(works.includes(newVal)) showAlert("Такая работа уже существует!"); };
-        document.getElementById('addDutyBtn').onclick=()=>{ let newVal = prompt("Введите новый статус:"); if(newVal && newVal.trim() && !duties.includes(newVal.trim())){ duties.push(newVal.trim()); saveDictionaries(); updateSelects(); renderLists(); refreshTableBodyOnly(); showToast(`Статус "${newVal}" добавлен`); } else if(duties.includes(newVal)) showAlert("Такой статус уже существует!"); };
-        document.getElementById('dictSaveBtn').onclick=()=>{
-            let type=document.getElementById('dictType').value, oldVal=document.getElementById('dictOldValue').value, newVal=document.getElementById('dictNewValue').value.trim();
-            if(!newVal){ showAlert("Введите значение!"); return; }
-            if(type==='status'){ if(statuses.includes(newVal) && newVal!==oldVal){ showAlert("Такой статус уже существует!"); return; } citizensData.forEach(c=>{ if(c.status===oldVal) c.status=newVal; }); statuses[statuses.indexOf(oldVal)]=newVal; }
-            else if(type==='work'){ if(works.includes(newVal) && newVal!==oldVal){ showAlert("Такая работа уже существует!"); return; } citizensData.forEach(c=>{ if(c.powerStatus===oldVal) c.powerStatus=newVal; }); works[works.indexOf(oldVal)]=newVal; }
-            else if(type==='duty'){ if(duties.includes(newVal) && newVal!==oldVal){ showAlert("Такой статус уже существует!"); return; } citizensData.forEach(c=>{ if(c.militaryDuty===oldVal) c.militaryDuty=newVal; }); duties[duties.indexOf(oldVal)]=newVal; }
-            saveDictionaries(); updateSelects(); renderLists(); refreshTableBodyOnly(); showToast("Изменения сохранены");
-            document.getElementById('editDictModal').style.display='none';
-        };
-        document.getElementById('dictCancelBtn').onclick=()=>{ document.getElementById('editDictModal').style.display='none'; };
-        renderLists();
-        document.getElementById('settingsBackBtn').onclick=()=>{ window.currentPanel=null; dynamicPanel.innerHTML=''; };
-    }
-
-    function renderCitizensTableFull(){
-        currentPage=1;
-        let addBtnHtml=isAdmin?`<button class="add-citizen-btn" id="addCitizenBtn">➕ Добавить гражданина</button>`:'';
-        let html=`<div class="citizens-panel"><div class="panel-header"><div class="search-box"><input type="text" id="citizenSearch" placeholder="🔍 Поиск..." value="${escapeHtml(currentSearchQuery)}"></div><div class="sort-buttons"><button class="sort-btn ${currentSort==='name_asc'?'active':''}" data-sort="name_asc">📋 По имени</button><button class="sort-btn ${currentSort==='activity_desc'?'active':''}" data-sort="activity_desc">⚡ Активность</button><button class="sort-btn ${currentSort==='joinDate_asc'?'active':''}" data-sort="joinDate_asc">📅 Дата вступления</button><button class="sort-btn ${currentSort==='powerStatus_asc'?'active':''}" data-sort="powerStatus_asc">💼 Работа</button><button class="sort-btn ${currentSort==='duty_asc'?'active':''}" data-sort="duty_asc">⚔️ Воинская обязанность</button></div>${addBtnHtml}</div>
-        <div style="overflow-x:auto;"><table id="citizensDynamicTable"><thead><tr><th>Гражданин</th><th>Дата вступления</th><th>Активность</th><th>Работа</th><th>Статус</th><th>Воинская обязанность</th>${isAdmin?'<th>Действия</th>':''}</tr></thead><tbody></tbody></table></div><div id="paginationControls"></div><button class="back-button" id="backToMainBtn">← Назад</button></div>`;
-        dynamicPanel.innerHTML=html;
-        updateSelects();
-        refreshTableBodyOnly();
-        if(isAdmin) document.getElementById('addCitizenBtn')?.addEventListener('click',openAddModal);
-        document.getElementById('citizenSearch')?.addEventListener('input',(e)=>{ currentSearchQuery=e.target.value; currentPage=1; refreshTableBodyOnly(); });
-        document.querySelectorAll('.sort-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ let val=btn.getAttribute('data-sort'); if(val){ currentSort=val; currentPage=1; document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); refreshTableBodyOnly(); } }); });
-        document.getElementById('backToMainBtn')?.addEventListener('click',()=>{ window.currentPanel=null; dynamicPanel.innerHTML=''; });
-    }
+    // Теги для таблицы
+    let statuses = ["Грин-карта", "В резерве", "Гражданин", "Новичок", "Почётный"];
+    let works = ["Советник", "Капитан", "Мастер", "Лейтенант", "Страж", "Рядовой", "Кандидат"];
+    let duties = ["военнообязанный", "Отстранен"];
     
-    document.getElementById('showCitizensBtn').onclick=()=>{ window.currentPanel='citizens'; currentSearchQuery=""; currentSort="name_asc"; renderCitizensTableFull(); };
-    document.getElementById('showEventsBtn').onclick=()=>{ window.currentPanel='events'; renderEventsPanel(); };
+    function saveTags() {
+        localStorage.setItem('custom_squad_statuses', JSON.stringify(statuses));
+        localStorage.setItem('custom_squad_works', JSON.stringify(works));
+        localStorage.setItem('custom_squad_duties', JSON.stringify(duties));
+    }
+    function loadTags() {
+        const savedStatuses = localStorage.getItem('custom_squad_statuses');
+        const savedWorks = localStorage.getItem('custom_squad_works');
+        const savedDuties = localStorage.getItem('custom_squad_duties');
+        if(savedStatuses) statuses = JSON.parse(savedStatuses);
+        if(savedWorks) works = JSON.parse(savedWorks);
+        if(savedDuties) duties = JSON.parse(savedDuties);
+    }
+    loadTags();
+    
+    let isAdmin = localStorage.getItem('custom_squad_admin') === 'true';
     
     function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    function formatDate(d){ return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}); }
     
-    window.addEventListener('load',()=>{
+    function getActivityClass(a) {
+        const c = { "Постоянный актив":"#0f5c4b33", "Активный":"#2b6e5a33", "Малоактивный":"#7c5e2a33", "Неактивный":"#632c3c33" };
+        return `background: ${c[a] || "#0f5c4b33"}; color: #0f5c4b;`;
+    }
+    function getDutyClass(d) { return d==="военнообязанный" ? "background:#1e4d6b33; color:#1e4d6b;" : "background:#5c3a3a33; color:#5c3a3a;"; }
+    function getStatusClass(s) {
+        const c = { "Грин-карта":"#0f5c4b33", "В резерве":"#7c5e2a33", "Гражданин":"#2c4f5c33", "Новичок":"#314c5e33", "Почётный":"#6e3e4233" };
+        return `background: ${c[s] || "#0f5c4b33"}; color: #0f5c4b;`;
+    }
+    
+    // Обновление select'ов
+    function updateSelects() {
+        const statusSelect = document.getElementById('citizenStatus');
+        const powerSelect = document.getElementById('citizenPower');
+        const dutySelect = document.getElementById('citizenDuty');
+        if(statusSelect) statusSelect.innerHTML = statuses.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+        if(powerSelect) powerSelect.innerHTML = works.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+        if(dutySelect) dutySelect.innerHTML = duties.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+    }
+    
+    // ========== РЕДАКТОР ТЕГОВ ==========
+    function openTagEditorModal() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        renderTagEditor();
+        document.getElementById('tagEditorModal').style.display = 'flex';
+    }
+    function closeTagEditorModal() { document.getElementById('tagEditorModal').style.display = 'none'; }
+    
+    function renderTagEditor() {
+        const body = document.getElementById('tagEditorBody');
+        body.innerHTML = `
+            <div class="tag-editor-section">
+                <h3>📋 Статусы граждан</h3>
+                <div class="tag-list" id="statusesList">
+                    ${statuses.map(s => `<div class="tag-item"><span>${escapeHtml(s)}</span><button onclick="editTag('status', '${escapeHtml(s)}')">✏️</button><button onclick="deleteTag('status', '${escapeHtml(s)}')">🗑️</button></div>`).join('')}
+                </div>
+                <button class="add-tag-btn" onclick="addTagPrompt('status')">+ Добавить статус</button>
+            </div>
+            <div class="tag-editor-section">
+                <h3>💼 Работы / Должности</h3>
+                <div class="tag-list" id="worksList">
+                    ${works.map(w => `<div class="tag-item"><span>${escapeHtml(w)}</span><button onclick="editTag('work', '${escapeHtml(w)}')">✏️</button><button onclick="deleteTag('work', '${escapeHtml(w)}')">🗑️</button></div>`).join('')}
+                </div>
+                <button class="add-tag-btn" onclick="addTagPrompt('work')">+ Добавить работу</button>
+            </div>
+            <div class="tag-editor-section">
+                <h3>⚔️ Воинская обязанность</h3>
+                <div class="tag-list" id="dutiesList">
+                    ${duties.map(d => `<div class="tag-item"><span>${escapeHtml(d)}</span><button onclick="editTag('duty', '${escapeHtml(d)}')">✏️</button><button onclick="deleteTag('duty', '${escapeHtml(d)}')">🗑️</button></div>`).join('')}
+                </div>
+                <button class="add-tag-btn" onclick="addTagPrompt('duty')">+ Добавить статус обязанности</button>
+            </div>
+            <div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="closeTagEditorModal()">Закрыть</button></div>
+        `;
+    }
+    
+    function addTagPrompt(type) {
+        const typeNames = { status: "статус", work: "работу", duty: "статус обязанности" };
+        showPrompt(`Добавить ${typeNames[type]}`, `Введите новый ${typeNames[type]}:`, (newValue) => {
+            if(newValue && newValue.trim()) {
+                if(type === 'status' && !statuses.includes(newValue.trim())) {
+                    statuses.push(newValue.trim());
+                    saveTags();
+                    updateSelects();
+                    renderTagEditor();
+                    renderCitizensTable();
+                    showToast(`Статус "${newValue}" добавлен`);
+                } else if(type === 'work' && !works.includes(newValue.trim())) {
+                    works.push(newValue.trim());
+                    saveTags();
+                    updateSelects();
+                    renderTagEditor();
+                    renderCitizensTable();
+                    showToast(`Работа "${newValue}" добавлена`);
+                } else if(type === 'duty' && !duties.includes(newValue.trim())) {
+                    duties.push(newValue.trim());
+                    saveTags();
+                    updateSelects();
+                    renderTagEditor();
+                    renderCitizensTable();
+                    showToast(`Статус обязанности "${newValue}" добавлен`);
+                } else {
+                    showAlert("Такой элемент уже существует!");
+                }
+            }
+        });
+    }
+    
+    function editTag(type, oldValue) {
+        const typeNames = { status: "статус", work: "работу", duty: "статус обязанности" };
+        showPrompt(`Редактировать ${typeNames[type]}`, `Введите новое значение для "${oldValue}":`, (newValue) => {
+            if(newValue && newValue.trim() && newValue !== oldValue) {
+                if(type === 'status') {
+                    const idx = statuses.indexOf(oldValue);
+                    if(idx !== -1) {
+                        citizensData.forEach(c => { if(c.status === oldValue) c.status = newValue.trim(); });
+                        statuses[idx] = newValue.trim();
+                    }
+                } else if(type === 'work') {
+                    const idx = works.indexOf(oldValue);
+                    if(idx !== -1) {
+                        citizensData.forEach(c => { if(c.powerStatus === oldValue) c.powerStatus = newValue.trim(); });
+                        works[idx] = newValue.trim();
+                    }
+                } else if(type === 'duty') {
+                    const idx = duties.indexOf(oldValue);
+                    if(idx !== -1) {
+                        citizensData.forEach(c => { if(c.militaryDuty === oldValue) c.militaryDuty = newValue.trim(); });
+                        duties[idx] = newValue.trim();
+                    }
+                }
+                saveTags();
+                updateSelects();
+                renderTagEditor();
+                renderCitizensTable();
+                showToast("Тег обновлен!");
+            } else if(newValue === oldValue) {
+                showAlert("Значение не изменено");
+            }
+        });
+    }
+    
+    function deleteTag(type, value) {
+        let canDelete = true;
+        if(type === 'status' && statuses.length <= 1) canDelete = false;
+        if(type === 'work' && works.length <= 1) canDelete = false;
+        if(type === 'duty' && duties.length <= 1) canDelete = false;
+        if(!canDelete) { showAlert("Нельзя удалить последний элемент!"); return; }
+        
+        showConfirm("Удаление", `Удалить "${value}"? Граждане с этим значением получат первое из списка.`, (ok) => {
+            if(ok) {
+                if(type === 'status') {
+                    const newStatuses = statuses.filter(s => s !== value);
+                    citizensData.forEach(c => { if(c.status === value) c.status = newStatuses[0]; });
+                    statuses.length = 0; statuses.push(...newStatuses);
+                } else if(type === 'work') {
+                    const newWorks = works.filter(w => w !== value);
+                    citizensData.forEach(c => { if(c.powerStatus === value) c.powerStatus = newWorks[0]; });
+                    works.length = 0; works.push(...newWorks);
+                } else if(type === 'duty') {
+                    const newDuties = duties.filter(d => d !== value);
+                    citizensData.forEach(c => { if(c.militaryDuty === value) c.militaryDuty = newDuties[0]; });
+                    duties.length = 0; duties.push(...newDuties);
+                }
+                saveTags();
+                updateSelects();
+                renderTagEditor();
+                renderCitizensTable();
+                showToast("Элемент удален");
+            }
+        });
+    }
+    
+    // Кастомный промпт
+    let pendingPromptCallback = null;
+    function showPrompt(title, message, onOk) {
+        const dialog = document.createElement('div');
+        dialog.className = 'custom-dialog';
+        dialog.style.display = 'flex';
+        dialog.innerHTML = `
+            <div class="dialog-card" style="max-width:350px;">
+                <h3 style="margin-bottom:0.5rem;">${escapeHtml(title)}</h3>
+                <p style="margin-bottom:1rem;">${escapeHtml(message)}</p>
+                <input type="text" id="promptInput" style="width:100%; padding:0.7rem; margin-bottom:1rem; border:2px solid #000; border-radius:60px;">
+                <div class="modal-buttons">
+                    <button id="promptOkBtn" style="background:#000; color:white;">OK</button>
+                    <button id="promptCancelBtn" style="background:#ccc;">Отмена</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        const input = dialog.querySelector('#promptInput');
+        input.focus();
+        dialog.querySelector('#promptOkBtn').onclick = () => {
+            const val = input.value.trim();
+            dialog.remove();
+            if(onOk) onOk(val);
+        };
+        dialog.querySelector('#promptCancelBtn').onclick = () => {
+            dialog.remove();
+            if(onOk) onOk(null);
+        };
+    }
+    
+    // ========== УПРАВЛЕНИЕ ГРАЖДАНАМИ ==========
+    function renderCitizensTable() {
+        const modalBody = document.getElementById('citizensModalBody');
+        modalBody.innerHTML = `
+            <table class="citizens-table">
+                <thead>
+                    <tr><th>Гражданин</th><th>Дата</th><th>Статус</th><th>Работа</th><th>Активность</th><th>Воинская</th>${isAdmin ? '<th>Действия</th>' : ''}</thead>
+                <tbody>
+                    ${citizensData.map(c => `
+                        <tr>
+                            <td><div class="citizen-name-cell"><span class="citizen-fullname">${escapeHtml(c.fullName)}</span><div class="citizen-nicks"><span>🎮 ${escapeHtml(c.minecraft)}</span><span>💬 ${escapeHtml(c.discord)}</span></div></div></td>
+                            <td>${formatDate(c.joinDate)}</td>
+                            <td><span class="badge" style="${getStatusClass(c.status)}">${escapeHtml(c.status)}</span></td>
+                            <td><span class="badge">${escapeHtml(c.powerStatus)}</span></td>
+                            <td><span class="badge" style="${getActivityClass(c.activity)}">${escapeHtml(c.activity)}</span></td>
+                            <td><span class="badge" style="${getDutyClass(c.militaryDuty)}">${escapeHtml(c.militaryDuty)}</span></td>
+                            ${isAdmin ? `
+                            <td><div class="admin-actions">
+                                <button class="small-btn edit" onclick="openEditCitizenModal(${c.id})">✏️</button>
+                                <button class="small-btn delete" onclick="deleteCitizen(${c.id})">🗑️</button>
+                            </div></td>
+                            ` : ''}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            ${!isAdmin ? '<div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="closeCitizensModal()">Закрыть</button></div>' : ''}
+        `;
+        if(isAdmin) {
+            const closeBtn = document.createElement('div');
+            closeBtn.style.textAlign = 'center';
+            closeBtn.style.marginTop = '1rem';
+            closeBtn.innerHTML = '<button class="action-btn" onclick="closeCitizensModal()">Закрыть</button><button class="action-btn" style="background:#2dd4bf; color:#000; margin-left:0.5rem;" onclick="openAddCitizenModal(); closeCitizensModal();">➕ Добавить гражданина</button>';
+            modalBody.appendChild(closeBtn);
+        }
+    }
+    
+    function openCitizensModal() {
+        renderCitizensTable();
+        document.getElementById('citizensModal').style.display = 'flex';
+    }
+    function closeCitizensModal() { document.getElementById('citizensModal').style.display = 'none'; }
+    
+    function openAddCitizenModal() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        updateSelects();
+        document.getElementById('editCitizenId').value = '';
+        document.getElementById('citizenFullName').value = '';
+        document.getElementById('citizenMinecraft').value = '';
+        document.getElementById('citizenDiscord').value = '';
+        document.getElementById('citizenJoinDate').value = new Date().toISOString().slice(0,10);
+        document.getElementById('citizenStatus').value = statuses[0];
+        document.getElementById('citizenPower').value = works[0];
+        document.getElementById('citizenActivity').value = 'Активный';
+        document.getElementById('citizenDuty').value = duties[0];
+        document.getElementById('citizenModalTitle').innerText = '➕ Добавить гражданина';
+        document.getElementById('editCitizenModal').style.display = 'flex';
+    }
+    
+    function openEditCitizenModal(id) {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const citizen = citizensData.find(c => c.id === id);
+        if(!citizen) return;
+        updateSelects();
+        document.getElementById('editCitizenId').value = citizen.id;
+        document.getElementById('citizenFullName').value = citizen.fullName;
+        document.getElementById('citizenMinecraft').value = citizen.minecraft;
+        document.getElementById('citizenDiscord').value = citizen.discord;
+        document.getElementById('citizenJoinDate').value = citizen.joinDate;
+        document.getElementById('citizenStatus').value = citizen.status;
+        document.getElementById('citizenPower').value = citizen.powerStatus;
+        document.getElementById('citizenActivity').value = citizen.activity;
+        document.getElementById('citizenDuty').value = citizen.militaryDuty;
+        document.getElementById('citizenModalTitle').innerText = '✏️ Редактировать гражданина';
+        document.getElementById('editCitizenModal').style.display = 'flex';
+    }
+    
+    function closeEditCitizenModal() { document.getElementById('editCitizenModal').style.display = 'none'; }
+    
+    document.getElementById('saveCitizenBtn').onclick = () => {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const id = document.getElementById('editCitizenId').value;
+        const fullName = document.getElementById('citizenFullName').value.trim();
+        const minecraft = document.getElementById('citizenMinecraft').value.trim();
+        const discord = document.getElementById('citizenDiscord').value.trim();
+        const joinDate = document.getElementById('citizenJoinDate').value;
+        const status = document.getElementById('citizenStatus').value;
+        const power = document.getElementById('citizenPower').value;
+        const activity = document.getElementById('citizenActivity').value;
+        const duty = document.getElementById('citizenDuty').value;
+        
+        if(!fullName || !minecraft || !discord || !joinDate) { showAlert("Заполните все поля!"); return; }
+        
+        if(id === '') {
+            citizensData.push({ id: nextCitizenId++, fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty });
+            showToast("Гражданин добавлен!");
+        } else {
+            const idx = citizensData.findIndex(c => c.id === parseInt(id));
+            if(idx !== -1) {
+                citizensData[idx] = { id: parseInt(id), fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty };
+                showToast("Гражданин обновлен!");
+            }
+        }
+        closeEditCitizenModal();
+        renderCitizensTable();
+    };
+    
+    function deleteCitizen(id) {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        showConfirm("Удаление", "Удалить этого гражданина?", (ok) => {
+            if(ok) {
+                citizensData = citizensData.filter(c => c.id !== id);
+                showToast("Гражданин удален!");
+                renderCitizensTable();
+            }
+        });
+    }
+    
+    // ========== УПРАВЛЕНИЕ СОБЫТИЯМИ ==========
+    function openEventsManageModal() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const modalBody = document.getElementById('eventsManageModalBody');
+        modalBody.innerHTML = `
+            <div style="max-height: 55vh; overflow-y: auto;">
+                ${eventsData.map(ev => `
+                    <div style="border-bottom:1px solid rgba(0,0,0,0.2); padding:0.8rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <div><strong>${escapeHtml(ev.title)}</strong><br><small>${escapeHtml(ev.description)}</small></div>
+                        <div>
+                            <button class="small-btn" style="background:#fbbf24; color:#000;" onclick="openEditEventModal(${ev.id}); closeEventsManageModal();">✏️</button>
+                            <button class="small-btn" style="background:#e53e3e;" onclick="deleteEventById(${ev.id})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="text-align:center; margin-top:1rem;">
+                <button class="action-btn" style="background:#2dd4bf; color:#000;" onclick="openAddEventModal(); closeEventsManageModal();">➕ Добавить событие</button>
+                <button class="action-btn" onclick="closeEventsManageModal()">Закрыть</button>
+            </div>
+        `;
+        document.getElementById('eventsManageModal').style.display = 'flex';
+    }
+    function closeEventsManageModal() { document.getElementById('eventsManageModal').style.display = 'none'; }
+    
+    function showFullStory(event) {
+        document.getElementById('storyModalTitle').innerText = event.title;
+        document.getElementById('storyModalImage').src = event.image;
+        document.getElementById('storyModalText').innerHTML = event.fullStory;
+        document.getElementById('storyModal').style.display = 'flex';
+    }
+    document.getElementById('closeStoryModalBtn').onclick = () => document.getElementById('storyModal').style.display = 'none';
+    
+    window.openEditEventModal = function(id) {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const ev = eventsData.find(e => e.id === id);
+        if(!ev) return;
+        document.getElementById('editEventId').value = ev.id;
+        document.getElementById('editEventName').value = ev.title;
+        document.getElementById('editEventDesc').value = ev.description;
+        document.getElementById('editEventFullStory').value = ev.fullStory;
+        document.getElementById('editEventImage').value = ev.image;
+        document.getElementById('editEventModal').style.display = 'flex';
+    };
+    window.saveEditedEvent = function() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const id = parseInt(document.getElementById('editEventId').value);
+        const idx = eventsData.findIndex(e => e.id === id);
+        if(idx !== -1) {
+            eventsData[idx] = {
+                id: id, title: document.getElementById('editEventName').value.trim(),
+                description: document.getElementById('editEventDesc').value.trim(),
+                fullStory: document.getElementById('editEventFullStory').value.trim(),
+                image: document.getElementById('editEventImage').value.trim() || "https://placehold.co/400x400/333/white?text=Event"
+            };
+            saveEvents(); showToast("Событие обновлено!");
+            document.getElementById('editEventModal').style.display = 'none';
+            renderHomePage();
+        }
+    };
+    window.deleteEvent = function() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const id = parseInt(document.getElementById('editEventId').value);
+        showConfirm("Удаление", "Удалить это событие?", (ok) => {
+            if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); document.getElementById('editEventModal').style.display = 'none'; renderHomePage(); }
+        });
+    };
+    window.deleteEventById = function(id) {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        showConfirm("Удаление", "Удалить это событие?", (ok) => {
+            if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); renderHomePage(); if(document.getElementById('eventsManageModal').style.display === 'flex') openEventsManageModal(); }
+        });
+    };
+    window.openAddEventModal = function() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        document.getElementById('newEventName').value = '';
+        document.getElementById('newEventDesc').value = '';
+        document.getElementById('newEventFullStory').value = '';
+        document.getElementById('newEventImage').value = '';
+        document.getElementById('addEventModal').style.display = 'flex';
+    };
+    window.addNewEvent = function() {
+        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
+        const title = document.getElementById('newEventName').value.trim();
+        const description = document.getElementById('newEventDesc').value.trim();
+        const fullStory = document.getElementById('newEventFullStory').value.trim();
+        const image = document.getElementById('newEventImage').value.trim();
+        if(!title || !description || !fullStory) { showAlert("Заполните все поля!"); return; }
+        eventsData.push({ id: nextEventId++, title, description, fullStory, image: image || "https://placehold.co/400x400/333/white?text=Event" });
+        saveEvents(); showToast("Событие добавлено!");
+        document.getElementById('addEventModal').style.display = 'none';
+        renderHomePage();
+    };
+    
+    document.getElementById('saveEventBtn').onclick = () => window.saveEditedEvent();
+    document.getElementById('cancelEventBtn').onclick = () => document.getElementById('editEventModal').style.display = 'none';
+    document.getElementById('deleteEventBtn').onclick = () => window.deleteEvent();
+    document.getElementById('confirmAddEventBtn').onclick = () => window.addNewEvent();
+    document.getElementById('cancelAddEventBtn').onclick = () => document.getElementById('addEventModal').style.display = 'none';
+    
+    // Админ система
+    function updateAdminUI() {
+        const statusSpan = document.getElementById('adminStatusText');
+        const adminNameSpan = document.getElementById('adminNameDisplay');
+        if(isAdmin) {
+            statusSpan.innerText = 'Администратор';
+            statusSpan.style.backgroundColor = '#2dd4bf44';
+            statusSpan.style.color = '#2dd4bf';
+            adminNameSpan.innerText = 'Adminchik';
+        } else {
+            statusSpan.innerText = 'Не авторизован';
+            statusSpan.style.backgroundColor = '#00000044';
+            statusSpan.style.color = '#fff';
+            adminNameSpan.innerText = 'Админ';
+        }
+    }
+    
+    document.getElementById('adminCornerBtn').onclick = () => {
+        if(isAdmin) document.getElementById('adminPanelModal').style.display = 'flex';
+        else document.getElementById('adminAuthModal').style.display = 'flex';
+    };
+    
+    function closeAdminPanel() { document.getElementById('adminPanelModal').style.display = 'none'; }
+    
+    document.getElementById('logoutAdminBtn').onclick = () => {
+        showConfirm("Выход", "Вы действительно хотите выйти из режима администратора?", (ok) => {
+            if(ok) {
+                localStorage.setItem('custom_squad_admin', 'false');
+                isAdmin = false;
+                updateAdminUI();
+                showToast("Вы вышли из админки");
+                renderHomePage();
+                closeAdminPanel();
+            }
+        });
+    };
+    
+    document.getElementById('submitAdminAuth').onclick = () => {
+        const l = document.getElementById('adminLogin').value.trim(), p = document.getElementById('adminPassword').value.trim();
+        if(!l || !p) showAlert("Заполните все поля!");
+        else if(isMasterAdmin(l,p)) {
+            localStorage.setItem('custom_squad_admin', 'true');
+            isAdmin = true;
+            showToast(`Добро пожаловать, ${l}!`);
+            closeAdminModal();
+            updateAdminUI();
+            renderHomePage();
+        } else showAlert("Неверный логин или пароль!");
+    };
+    function closeAdminModal() { document.getElementById('adminAuthModal').style.display = 'none'; document.getElementById('adminLogin').value = ''; document.getElementById('adminPassword').value = ''; }
+    document.getElementById('closeAdminAuth').onclick = closeAdminModal;
+    window.onclick = (e) => {
+        if(e.target === document.getElementById('adminAuthModal')) closeAdminModal();
+        if(e.target === document.getElementById('storyModal')) document.getElementById('storyModal').style.display = 'none';
+        if(e.target === document.getElementById('editEventModal')) document.getElementById('editEventModal').style.display = 'none';
+        if(e.target === document.getElementById('addEventModal')) document.getElementById('addEventModal').style.display = 'none';
+        if(e.target === document.getElementById('citizensModal')) closeCitizensModal();
+        if(e.target === document.getElementById('eventsManageModal')) closeEventsManageModal();
+        if(e.target === document.getElementById('adminPanelModal')) closeAdminPanel();
+        if(e.target === document.getElementById('editCitizenModal')) closeEditCitizenModal();
+        if(e.target === document.getElementById('tagEditorModal')) closeTagEditorModal();
+    };
+    updateAdminUI();
+    
+    window.showFullStoryById = (id) => { const ev = eventsData.find(e => e.id === id); if(ev) showFullStory(ev); };
+    
+    // Рендер главной страницы
+    function renderHomePage() {
+        const mainEvent = eventsData[0];
+        let html = `
+            <div class="hero-header"><div class="hero-bg"></div><h1>Custom Squad</h1></div>
+            <div class="main-event">
+                <div class="main-event-card">
+                    <img class="main-event-img" src="${mainEvent.image}" onerror="this.src='https://placehold.co/800x300/333/white?text=Event'">
+                    <div class="main-event-content">
+                        <div class="main-event-title">${escapeHtml(mainEvent.title)}</div>
+                        <div class="main-event-desc">${escapeHtml(mainEvent.description)}</div>
+                        <button class="story-btn" onclick="window.showFullStoryById(${mainEvent.id})">📖 Читать полную историю</button>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button class="action-btn" id="viewAllEventsBtn">📋 Посмотреть все события (${eventsData.length})</button>
+                <button class="action-btn" id="showCitizensTableBtn">📋 Таблица граждан</button>
+            </div>
+        `;
+        document.getElementById('dynamicPanel').innerHTML = html;
+        document.getElementById('viewAllEventsBtn')?.addEventListener('click', () => { currentPage = 'allEvents'; renderAllEventsPage(); });
+        document.getElementById('showCitizensTableBtn')?.addEventListener('click', openCitizensModal);
+    }
+    
+    function renderAllEventsPage() {
+        let html = `
+            <div class="hero-header"><div class="hero-bg"></div><h1>Все события сквада</h1></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+                ${eventsData.map(ev => `
+                    <div class="main-event-card">
+                        <img class="main-event-img" style="height:200px;" src="${ev.image}" onerror="this.src='https://placehold.co/400x200/333/white?text=Image'">
+                        <div class="main-event-content">
+                            <div class="main-event-title" style="font-size:1.2rem;">${escapeHtml(ev.title)}</div>
+                            <div class="main-event-desc" style="font-size:0.85rem;">${escapeHtml(ev.description)}</div>
+                            <button class="story-btn" onclick="window.showFullStoryById(${ev.id})">📖 Читать историю</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="text-align:center;"><button class="action-btn" id="backToHomeBtn">← На главную</button></div>
+        `;
+        document.getElementById('dynamicPanel').innerHTML = html;
+        document.getElementById('backToHomeBtn')?.addEventListener('click', () => { currentPage = 'home'; renderHomePage(); });
+    }
+    
+    let currentPage = 'home';
+    function renderPage() {
+        if(currentPage === 'home') renderHomePage();
+        else if(currentPage === 'allEvents') renderAllEventsPage();
+    }
+    
+    window.addEventListener('load', () => {
         mainContent.classList.remove('visible');
-        setTimeout(()=>{
+        setTimeout(() => {
             heroScreen.classList.add('hide-hero');
-            setTimeout(()=>{ heroScreen.style.display='none'; mainContent.classList.add('visible'); },700);
-        },1500);
+            setTimeout(() => { heroScreen.style.display = 'none'; mainContent.classList.add('visible'); renderPage(); }, 700);
+        }, 1500);
     });
 </script>
 </body>
