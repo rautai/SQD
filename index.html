@@ -3,20 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Custom Squad | Золотой стиль</title>
+    <title>Custom Squad | Золотая эпоха</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 50%, #0f141f 100%);
+            background: radial-gradient(ellipse at 30% 40%, #0f1420, #05070a);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
             position: relative;
             overflow-x: hidden;
+        }
+        
+        /* Падающие светящиеся желтые точки */
+        .falling-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #ffd700, #ff8c00);
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ffd700, 0 0 4px #ffaa00;
+            opacity: 0.8;
+            animation: fallDot linear infinite;
+        }
+        @keyframes fallDot {
+            0% {
+                transform: translateY(-10vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+        }
+        
+        /* Тёмная вуаль сверху для лучшей читаемости */
+        .overlay-dark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Золотые блики */
+        .gold-glow {
+            position: fixed;
+            top: 20%;
+            right: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(255,215,0,0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatGlow 12s infinite alternate;
+        }
+        .gold-glow-left {
+            position: fixed;
+            bottom: 0;
+            left: -20%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(212,175,55,0.06), transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            animation: floatGlowLeft 15s infinite alternate;
+        }
+        @keyframes floatGlow {
+            0% { transform: translateX(0) translateY(0); opacity: 0.4; }
+            100% { transform: translateX(-5%) translateY(-5%); opacity: 0.8; }
+        }
+        @keyframes floatGlowLeft {
+            0% { transform: translateX(0) translateY(0); opacity: 0.3; }
+            100% { transform: translateX(5%) translateY(3%); opacity: 0.6; }
         }
         
         /* Анимированные частицы фона */
@@ -39,8 +122,8 @@
         }
         @keyframes floatParticle {
             0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
             100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
         
@@ -52,14 +135,77 @@
             height: 100%;
             background-image: linear-gradient(rgba(255,215,0,0.02) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255,215,0,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-size: 50px 50px;
             pointer-events: none;
             z-index: 2;
         }
         
+        /* Левая панель с рекламой */
+        .left-ad-panel {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 180px;
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+        .ad-card {
+            background: rgba(20, 25, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .ad-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(255,215,0,0.7);
+            background: rgba(30, 35, 55, 0.9);
+        }
+        .ad-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .ad-title { font-weight: 700; color: #ffd700; font-size: 1rem; margin-bottom: 0.3rem; }
+        .ad-desc { font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem; }
+        .ad-btn {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.4);
+            border-radius: 60px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            color: #ffd700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        .ad-card:hover .ad-btn { background: rgba(255,215,0,0.3); }
+        
+        /* Текст внизу слева */
+        .footer-credit {
+            position: fixed;
+            bottom: 20px;
+            left: 24px;
+            z-index: 150;
+            font-size: 0.7rem;
+            color: rgba(255,215,0,0.5);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+        }
+        
         .admin-corner {
             position: fixed;
-            bottom: 24px;
+            bottom: 20px;
             right: 24px;
             z-index: 200;
             background: rgba(20, 25, 40, 0.95);
@@ -130,6 +276,7 @@
             to { opacity: 1; transform: scale(1); }
         }
         
+        /* ОСНОВНАЯ ПАНЕЛЬ - ЦЕНТР */
         .main-content {
             width: 100%;
             max-width: 1400px;
@@ -243,6 +390,16 @@
         }
         .story-btn:hover { background: rgba(255,215,0,0.18); transform: scale(1.02); }
         
+        @media (max-width: 1200px) {
+            .left-ad-panel { display: none; }
+        }
+        
+        @media (max-width: 800px) {
+            .main-content { padding: 1.2rem; }
+            .main-event-img { height: 200px; }
+            .footer-credit { font-size: 0.6rem; bottom: 12px; left: 12px; }
+        }
+        
         /* Модальные окна */
         .modal-overlay {
             display: none;
@@ -294,7 +451,6 @@
         .modal-close:hover { transform: scale(1.1); }
         .modal-body { padding: 1.5rem; color: rgba(255,255,255,0.85); }
         
-        /* Таблица */
         .citizens-table {
             width: 100%;
             border-collapse: collapse;
@@ -313,7 +469,6 @@
             color: rgba(255,255,255,0.85);
         }
         
-        /* Цветные теги - единая золотая гамма */
         .tag {
             display: inline-block;
             padding: 3px 10px;
@@ -321,7 +476,6 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-        /* Золотые/теплые оттенки для хороших статусов */
         .tag-gold { background: linear-gradient(135deg, #d4af37, #b8860b); color: #1a1a1a; }
         .tag-green { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #e8f5e9; }
         .tag-orange { background: linear-gradient(135deg, #e65100, #bf360c); color: #fff3e0; }
@@ -333,7 +487,6 @@
         .citizen-name-cell { display: flex; flex-direction: column; }
         .citizen-fullname { font-weight: 700; font-size: 1rem; color: #ffffff; }
         .citizen-nicks { font-size: 0.65rem; color: rgba(255,215,0,0.7); margin-top: 3px; }
-        .citizen-nicks span { display: inline-block; margin-right: 10px; }
         
         .admin-actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .small-btn {
@@ -345,9 +498,7 @@
             font-weight: 600;
             color: #ffd700;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .small-btn:hover { background: rgba(255,215,0,0.25); transform: scale(1.02); }
         .small-btn.delete { background: rgba(220,53,69,0.2); border-color: rgba(220,53,69,0.5); color: #ff8888; }
         
         .admin-panel-modal {
@@ -419,8 +570,6 @@
             color: #ffffff;
             font-family: inherit;
         }
-        .citizen-form input:focus, .citizen-form select:focus, .citizen-form textarea:focus { outline: none; border-color: #ffd700; }
-        .citizen-form input::placeholder, .citizen-form textarea::placeholder { color: rgba(255,215,0,0.5); }
         .form-buttons { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
         .form-buttons button { flex: 1; padding: 0.6rem; border-radius: 40px; cursor: pointer; font-weight: bold; border: none; }
         
@@ -439,14 +588,6 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-        }
-        .tag-item span { font-size: 0.8rem; color: rgba(255,255,255,0.9); }
-        .tag-item button {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 0.75rem;
-            color: #ffd700;
         }
         .add-tag-btn {
             background: rgba(255,215,0,0.1);
@@ -467,27 +608,24 @@
             padding: 1.8rem;
             width: 260px;
             text-align: center;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             cursor: pointer;
+            transition: all 0.4s ease;
         }
         .gov-card:hover { transform: translateY(-8px); border-color: rgba(255,215,0,0.6); background: rgba(45,50,70,0.8); }
         .gov-card-icon { font-size: 3rem; margin-bottom: 0.8rem; }
         .gov-card h2 { font-size: 1.4rem; font-weight: 700; color: #ffd700; margin-bottom: 0.5rem; }
         .gov-card p { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
         
-        .constitution-container { max-height: 60vh; overflow-y: auto; padding-right: 0.5rem; }
+        .constitution-container { max-height: 60vh; overflow-y: auto; }
         .constitution-text { color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.65; }
-        .constitution-text strong { color: #ffd700; }
-        .constitution-text ol { margin-left: 1.2rem; margin-bottom: 0.8rem; }
-        .constitution-text li { margin-bottom: 0.5rem; }
-        .legislation-locked { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
-        .legislation-text { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 1.2rem; }
         
         .custom-dialog, .admin-auth-modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.92);
             backdrop-filter: blur(20px);
             z-index: 10004;
@@ -502,10 +640,8 @@
             max-width: 360px;
             border: 1px solid rgba(255,215,0,0.4);
             text-align: center;
-            animation: slideUpModal 0.3s ease;
         }
-        .dialog-card h3, .admin-auth-card h2 { color: #ffd700; margin-bottom: 0.8rem; font-size: 1.3rem; }
-        .dialog-card p { color: rgba(255,255,255,0.8); margin-bottom: 1.2rem; }
+        .dialog-card h3, .admin-auth-card h2 { color: #ffd700; margin-bottom: 0.8rem; }
         .admin-auth-card input {
             width: 100%;
             padding: 0.7rem;
@@ -515,7 +651,6 @@
             border-radius: 60px;
             color: #ffffff;
         }
-        .admin-auth-card input::placeholder { color: rgba(255,215,0,0.5); }
         .admin-auth-card button {
             width: 100%;
             padding: 0.7rem;
@@ -533,7 +668,6 @@
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: rgba(20,25,45,0.98);
-            backdrop-filter: blur(12px);
             border-left: 4px solid #ffd700;
             padding: 10px 20px;
             border-radius: 60px;
@@ -545,19 +679,36 @@
             pointer-events: none;
             white-space: nowrap;
         }
-        
-        @media (max-width: 800px) {
-            .main-content { padding: 1.2rem; }
-            .main-event-img { height: 200px; }
-            .gov-card { width: 220px; padding: 1.2rem; }
-            .custom-toast { white-space: normal; max-width: 90%; text-align: center; }
-        }
     </style>
 </head>
 <body>
 
+<!-- Падающие светящиеся желтые точки -->
+<div class="falling-dots" id="fallingDotsContainer"></div>
+
+<div class="overlay-dark"></div>
+<div class="gold-glow"></div>
+<div class="gold-glow-left"></div>
 <div class="particles" id="particlesContainer"></div>
 <div class="grid-overlay"></div>
+
+<!-- Левая панель с рекламой -->
+<div class="left-ad-panel">
+    <a href="https://politmine.ru" target="_blank" class="ad-card" rel="noopener noreferrer">
+        <div class="ad-icon">🏛️</div>
+        <div class="ad-title">Politmine</div>
+        <div class="ad-desc">Политическая симуляция</div>
+        <div class="ad-btn">Перейти →</div>
+    </a>
+    <a href="https://imperium.ru" target="_blank" class="ad-card" rel="noopener noreferrer">
+        <div class="ad-icon">👑</div>
+        <div class="ad-title">Imperium</div>
+        <div class="ad-desc">Сервер от Hausschuhe</div>
+        <div class="ad-btn">Играть →</div>
+    </a>
+</div>
+
+<div class="footer-credit">By Hausschuhe (Ditwi) • ver. 1.0</div>
 
 <div class="admin-corner" id="adminCornerBtn">
     <div class="admin-avatar">👑</div>
@@ -573,7 +724,7 @@
     <div id="dynamicPanel"></div>
 </div>
 
-<!-- Модальные окна (все ID сохранены для совместимости) -->
+<!-- Модальные окна (сокращены для читаемости) -->
 <div id="adminPanelModal" class="admin-panel-modal">
     <div class="admin-panel-container">
         <button class="admin-panel-close" onclick="closeAdminPanel()">✕</button>
@@ -595,123 +746,69 @@
     </div>
 </div>
 
-<div id="editCitizenModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2 id="citizenModalTitle">✏️ Редактировать гражданина</h2><button class="modal-close" onclick="closeEditCitizenModal()">✕</button></div>
-        <div class="modal-body">
-            <div class="citizen-form">
-                <input type="hidden" id="editCitizenId">
-                <input type="text" id="citizenFullName" placeholder="Имя и фамилия">
-                <input type="text" id="citizenMinecraft" placeholder="Minecraft ник">
-                <input type="text" id="citizenDiscord" placeholder="Discord ник">
-                <input type="date" id="citizenJoinDate">
-                <select id="citizenStatus"></select>
-                <select id="citizenPower"></select>
-                <select id="citizenActivity">
-                    <option value="Постоянный актив">Постоянный актив</option>
-                    <option value="Активный">Активный</option>
-                    <option value="Малоактивный">Малоактивный</option>
-                    <option value="Неактивный">Неактивный</option>
-                </select>
-                <select id="citizenDuty"></select>
-                <div class="form-buttons">
-                    <button id="saveCitizenBtn" style="background:#ffd700; color:#000;">Сохранить</button>
-                    <button onclick="closeEditCitizenModal()" style="background:#444; color:#fff;">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="editCitizenModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2 id="citizenModalTitle">✏️ Редактировать гражданина</h2><button class="modal-close" onclick="closeEditCitizenModal()">✕</button></div><div class="modal-body"><div class="citizen-form"><input type="hidden" id="editCitizenId"><input type="text" id="citizenFullName" placeholder="Имя и фамилия"><input type="text" id="citizenMinecraft" placeholder="Minecraft ник"><input type="text" id="citizenDiscord" placeholder="Discord ник"><input type="date" id="citizenJoinDate"><select id="citizenStatus"></select><select id="citizenPower"></select><select id="citizenActivity"><option value="Постоянный актив">Постоянный актив</option><option value="Активный">Активный</option><option value="Малоактивный">Малоактивный</option><option value="Неактивный">Неактивный</option></select><select id="citizenDuty"></select><div class="form-buttons"><button id="saveCitizenBtn" style="background:#ffd700; color:#000;">Сохранить</button><button onclick="closeEditCitizenModal()" style="background:#444; color:#fff;">Отмена</button></div></div></div></div></div>
+<div id="tagEditorModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2>🏷️ Редактор тегов</h2><button class="modal-close" onclick="closeTagEditorModal()">✕</button></div><div class="modal-body" id="tagEditorBody"></div></div></div>
+<div id="eventsManageModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2>📅 Управление событиями</h2><button class="modal-close" onclick="closeEventsManageModal()">✕</button></div><div class="modal-body" id="eventsManageModalBody"></div></div></div>
+<div id="storyModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2 id="storyModalTitle"></h2><button class="modal-close" onclick="closeStoryModal()">✕</button></div><div class="modal-body" id="storyModalBody"></div></div></div>
+<div id="addEventModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2>➕ Добавить событие</h2><button class="modal-close" onclick="closeAddEventModal()">✕</button></div><div class="modal-body"><div class="citizen-form"><input type="text" id="newEventName" placeholder="Название события"><textarea id="newEventDesc" rows="2" placeholder="Краткое описание"></textarea><textarea id="newEventFullStory" rows="3" placeholder="Полная история"></textarea><input type="text" id="newEventImage" placeholder="URL изображения"><div class="form-buttons"><button id="confirmAddEventBtn" style="background:#ffd700; color:#000;">Добавить</button><button onclick="closeAddEventModal()" style="background:#444; color:#fff;">Отмена</button></div></div></div></div></div>
+<div id="editEventModal" class="modal-overlay"><div class="modal-container small"><div class="modal-header"><h2>✏️ Редактировать событие</h2><button class="modal-close" onclick="closeEditEventModal()">✕</button></div><div class="modal-body"><div class="citizen-form"><input type="hidden" id="editEventId"><input type="text" id="editEventName" placeholder="Название события"><textarea id="editEventDesc" rows="2" placeholder="Краткое описание"></textarea><textarea id="editEventFullStory" rows="3" placeholder="Полная история"></textarea><input type="text" id="editEventImage" placeholder="URL изображения"><div class="form-buttons"><button id="saveEventBtn" style="background:#ffd700; color:#000;">Сохранить</button><button onclick="closeEditEventModal()" style="background:#444; color:#fff;">Отмена</button><button id="deleteEventBtn" style="background:#c62828; color:#fff;">Удалить</button></div></div></div></div></div>
 
-<div id="tagEditorModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2>🏷️ Редактор тегов</h2><button class="modal-close" onclick="closeTagEditorModal()">✕</button></div>
-        <div class="modal-body" id="tagEditorBody"></div>
-    </div>
-</div>
-
-<div id="eventsManageModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2>📅 Управление событиями</h2><button class="modal-close" onclick="closeEventsManageModal()">✕</button></div>
-        <div class="modal-body" id="eventsManageModalBody"></div>
-    </div>
-</div>
-
-<div id="storyModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2 id="storyModalTitle"></h2><button class="modal-close" onclick="closeStoryModal()">✕</button></div>
-        <div class="modal-body" id="storyModalBody"></div>
-    </div>
-</div>
-
-<div id="addEventModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2>➕ Добавить событие</h2><button class="modal-close" onclick="closeAddEventModal()">✕</button></div>
-        <div class="modal-body">
-            <div class="citizen-form">
-                <input type="text" id="newEventName" placeholder="Название события">
-                <textarea id="newEventDesc" rows="2" placeholder="Краткое описание"></textarea>
-                <textarea id="newEventFullStory" rows="3" placeholder="Полная история"></textarea>
-                <input type="text" id="newEventImage" placeholder="URL изображения">
-                <div class="form-buttons">
-                    <button id="confirmAddEventBtn" style="background:#ffd700; color:#000;">Добавить</button>
-                    <button onclick="closeAddEventModal()" style="background:#444; color:#fff;">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="editEventModal" class="modal-overlay">
-    <div class="modal-container small">
-        <div class="modal-header"><h2>✏️ Редактировать событие</h2><button class="modal-close" onclick="closeEditEventModal()">✕</button></div>
-        <div class="modal-body">
-            <div class="citizen-form">
-                <input type="hidden" id="editEventId">
-                <input type="text" id="editEventName" placeholder="Название события">
-                <textarea id="editEventDesc" rows="2" placeholder="Краткое описание"></textarea>
-                <textarea id="editEventFullStory" rows="3" placeholder="Полная история"></textarea>
-                <input type="text" id="editEventImage" placeholder="URL изображения">
-                <div class="form-buttons">
-                    <button id="saveEventBtn" style="background:#ffd700; color:#000;">Сохранить</button>
-                    <button onclick="closeEditEventModal()" style="background:#444; color:#fff;">Отмена</button>
-                    <button id="deleteEventBtn" style="background:#c62828; color:#fff;">Удалить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="customConfirmDialog" class="custom-dialog">
-    <div class="dialog-card">
-        <h3 id="dialogTitle">Подтверждение</h3>
-        <p id="dialogMessage">Вы уверены?</p>
-        <div class="form-buttons">
-            <button id="dialogConfirmBtn" style="background:#ffd700; color:#000;">Да</button>
-            <button id="dialogCancelBtn" style="background:#444; color:#fff;">Нет</button>
-        </div>
-    </div>
-</div>
-<div id="customAlertDialog" class="custom-dialog">
-    <div class="dialog-card">
-        <h3>Уведомление</h3>
-        <p id="alertMessage"></p>
-        <button id="alertOkBtn" style="background:#ffd700; color:#000;">OK</button>
-    </div>
-</div>
-<div id="adminAuthModal" class="admin-auth-modal">
-    <div class="admin-auth-card">
-        <div style="font-size: 2.5rem;">🔐</div>
-        <h2>Вход администратора</h2>
-        <input type="text" id="adminLogin" placeholder="Логин">
-        <input type="password" id="adminPassword" placeholder="Пароль">
-        <button id="submitAdminAuth">Войти</button>
-        <button id="closeAdminAuth" style="background:transparent; border:1px solid rgba(255,215,0,0.4); color:#ffd700; margin-top:0.5rem;">Отмена</button>
-    </div>
-</div>
+<div id="customConfirmDialog" class="custom-dialog"><div class="dialog-card"><h3 id="dialogTitle">Подтверждение</h3><p id="dialogMessage">Вы уверены?</p><div class="form-buttons"><button id="dialogConfirmBtn" style="background:#ffd700; color:#000;">Да</button><button id="dialogCancelBtn" style="background:#444; color:#fff;">Нет</button></div></div></div>
+<div id="customAlertDialog" class="custom-dialog"><div class="dialog-card"><h3>Уведомление</h3><p id="alertMessage"></p><button id="alertOkBtn" style="background:#ffd700; color:#000;">OK</button></div></div>
+<div id="adminAuthModal" class="admin-auth-modal"><div class="admin-auth-card"><div style="font-size:2.5rem;">🔐</div><h2>Вход администратора</h2><input type="text" id="adminLogin" placeholder="Логин"><input type="password" id="adminPassword" placeholder="Пароль"><button id="submitAdminAuth">Войти</button><button id="closeAdminAuth" style="background:transparent; border:1px solid rgba(255,215,0,0.4); color:#ffd700; margin-top:0.5rem;">Отмена</button></div></div>
 <div id="toastMessage" class="custom-toast"></div>
 
 <script>
+    // ========== ПАДАЮЩИЕ СВЕТЯЩИЕСЯ ТОЧКИ ==========
+    (function initFallingDots() {
+        const container = document.getElementById('fallingDotsContainer');
+        const DOT_COUNT = 60;
+        
+        function createDot() {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            const size = Math.random() * 5 + 2;
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            dot.style.left = `${Math.random() * 100}%`;
+            const duration = Math.random() * 6 + 3;
+            dot.style.animationDuration = `${duration}s`;
+            const delay = Math.random() * 10;
+            dot.style.animationDelay = `${delay}s`;
+            container.appendChild(dot);
+            
+            dot.addEventListener('animationend', () => {
+                dot.remove();
+                createDot();
+            });
+        }
+        
+        for(let i = 0; i < DOT_COUNT; i++) {
+            setTimeout(() => createDot(), Math.random() * 5000);
+        }
+        
+        setInterval(() => {
+            if(document.querySelectorAll('.dot').length < DOT_COUNT + 10) {
+                createDot();
+            }
+        }, 2000);
+    })();
+    
+    // Партиклы
+    (function initParticles() {
+        const container = document.getElementById('particlesContainer');
+        for(let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.width = `${Math.random() * 3 + 1.5}px`;
+            p.style.height = p.style.width;
+            p.style.left = `${Math.random() * 100}%`;
+            p.style.animationDuration = `${Math.random() * 12 + 8}s`;
+            p.style.animationDelay = `${Math.random() * 8}s`;
+            container.appendChild(p);
+        }
+    })();
+    
     // ========== ДИАЛОГИ ==========
     let pendingConfirmCallback = null;
     function showConfirm(title, message, onConfirm) {
@@ -721,7 +818,10 @@
         document.getElementById('customConfirmDialog').style.display = 'flex';
     }
     function closeConfirm() { document.getElementById('customConfirmDialog').style.display = 'none'; pendingConfirmCallback = null; }
-    function showAlert(message) { document.getElementById('alertMessage').innerHTML = message; document.getElementById('customAlertDialog').style.display = 'flex'; }
+    window.showAlert = function(message) { 
+        document.getElementById('alertMessage').innerHTML = message; 
+        document.getElementById('customAlertDialog').style.display = 'flex'; 
+    };
     function closeAlert() { document.getElementById('customAlertDialog').style.display = 'none'; }
     function showToast(message) {
         const toast = document.getElementById('toastMessage');
@@ -733,21 +833,6 @@
     document.getElementById('dialogConfirmBtn').onclick = () => { if(pendingConfirmCallback) pendingConfirmCallback(true); closeConfirm(); };
     document.getElementById('dialogCancelBtn').onclick = () => { if(pendingConfirmCallback) pendingConfirmCallback(false); closeConfirm(); };
     document.getElementById('alertOkBtn').onclick = closeAlert;
-    
-    // Партиклы
-    (function initParticles() {
-        const container = document.getElementById('particlesContainer');
-        for(let i = 0; i < 80; i++) {
-            const p = document.createElement('div');
-            p.classList.add('particle');
-            p.style.width = `${Math.random() * 3 + 1.5}px`;
-            p.style.height = p.style.width;
-            p.style.left = `${Math.random() * 100}%`;
-            p.style.animationDuration = `${Math.random() * 12 + 8}s`;
-            p.style.animationDelay = `${Math.random() * 8}s`;
-            container.appendChild(p);
-        }
-    })();
     
     // Шифрование для админа
     const ENC_KEY = 0x5A;
@@ -804,31 +889,17 @@
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function formatDate(d) { return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}); }
     
-    // Функции для классов тегов - единая гамма
     function getStatusClass(s) {
-        const map = { 
-            "Грин-карта": "tag-green", 
-            "В резерве": "tag-orange", 
-            "Гражданин": "tag-teal", 
-            "Новичок": "tag-dark", 
-            "Почётный": "tag-gold" 
-        };
+        const map = { "Грин-карта":"tag-green", "В резерве":"tag-orange", "Гражданин":"tag-teal", "Новичок":"tag-dark", "Почётный":"tag-gold" };
         return map[s] || "tag-dark";
     }
     function getActivityClass(a) {
-        const map = { 
-            "Постоянный актив": "tag-green", 
-            "Активный": "tag-teal", 
-            "Малоактивный": "tag-orange", 
-            "Неактивный": "tag-red" 
-        };
+        const map = { "Постоянный актив":"tag-green", "Активный":"tag-teal", "Малоактивный":"tag-orange", "Неактивный":"tag-red" };
         return map[a] || "tag-dark";
     }
     function getWorkClass(w) {
-        const leaders = ["Советник", "Капитан", "Мастер"];
-        const seniors = ["Лейтенант", "Страж"];
-        if(leaders.includes(w)) return "tag-gold";
-        if(seniors.includes(w)) return "tag-purple";
+        if(["Советник","Капитан","Мастер"].includes(w)) return "tag-gold";
+        if(["Лейтенант","Страж"].includes(w)) return "tag-purple";
         return "tag-dark";
     }
     function getDutyClass(d) { return d === "военнообязанный" ? "tag-green" : "tag-red"; }
@@ -842,23 +913,19 @@
         if(dutySel) dutySel.innerHTML = duties.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
     }
     
-    // ========== ТАБЛИЦА ГРАЖДАН ==========
     function renderCitizensTable() {
-        const modalBody = document.getElementById('citizensModalBody');
-        modalBody.innerHTML = `
-            <table class="citizens-table">
-                <thead><tr><th>Гражданин</th><th>Дата</th><th>Статус</th><th>Работа</th><th>Активность</th><th>Воинская</th>${isAdmin ? '<th>Действия</th>' : ''}</tr></thead>
-                <tbody>${citizensData.map(c => `
-                    <tr>
-                        <td><div class="citizen-name-cell"><span class="citizen-fullname">${escapeHtml(c.fullName)}</span><div class="citizen-nicks"><span>🎮 ${escapeHtml(c.minecraft)}</span><span>💬 ${escapeHtml(c.discord)}</span></div></div></td>
-                        <td>${formatDate(c.joinDate)}</td>
-                        <td><span class="tag ${getStatusClass(c.status)}">${escapeHtml(c.status)}</span></td>
-                        <td><span class="tag ${getWorkClass(c.powerStatus)}">${escapeHtml(c.powerStatus)}</span></td>
-                        <td><span class="tag ${getActivityClass(c.activity)}">${escapeHtml(c.activity)}</span></td>
-                        <td><span class="tag ${getDutyClass(c.militaryDuty)}">${escapeHtml(c.militaryDuty)}</span></td>
-                        ${isAdmin ? `<td><div class="admin-actions"><button class="small-btn edit" onclick="openEditCitizenModal(${c.id})">✏️</button><button class="small-btn delete" onclick="deleteCitizen(${c.id})">🗑️</button></div></td>` : ''}
-                    </tr>`).join('')}
-                </tbody>
+        document.getElementById('citizensModalBody').innerHTML = `
+            <table class="citizens-table"><thead><tr><th>Гражданин</th><th>Дата</th><th>Статус</th><th>Работа</th><th>Активность</th><th>Воинская</th>${isAdmin ? '<th>Действия</th>' : ''}</thead>
+            <tbody>${citizensData.map(c => `
+                <tr>
+                    <td><div class="citizen-name-cell"><span class="citizen-fullname">${escapeHtml(c.fullName)}</span><div class="citizen-nicks">🎮 ${escapeHtml(c.minecraft)} • 💬 ${escapeHtml(c.discord)}</div></div></td>
+                    <td>${formatDate(c.joinDate)}</td>
+                    <td><span class="tag ${getStatusClass(c.status)}">${escapeHtml(c.status)}</span></td>
+                    <td><span class="tag ${getWorkClass(c.powerStatus)}">${escapeHtml(c.powerStatus)}</span></td>
+                    <td><span class="tag ${getActivityClass(c.activity)}">${escapeHtml(c.activity)}</span></td>
+                    <td><span class="tag ${getDutyClass(c.militaryDuty)}">${escapeHtml(c.militaryDuty)}</span></td>
+                    ${isAdmin ? `<td><div class="admin-actions"><button class="small-btn edit" onclick="openEditCitizenModal(${c.id})">✏️</button><button class="small-btn delete" onclick="deleteCitizen(${c.id})">🗑️</button></div></td>` : ''}
+                 `).join('')}</tbody>
             </table>
             <div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="closeCitizensModal()">Закрыть</button></div>
         `;
@@ -866,335 +933,52 @@
     
     function openCitizensModal() { renderCitizensTable(); document.getElementById('citizensModal').style.display = 'flex'; }
     function closeCitizensModal() { document.getElementById('citizensModal').style.display = 'none'; }
+    function openAddCitizenModal() { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } updateSelects(); document.getElementById('editCitizenId').value=''; document.getElementById('citizenFullName').value=''; document.getElementById('citizenMinecraft').value=''; document.getElementById('citizenDiscord').value=''; document.getElementById('citizenJoinDate').value=new Date().toISOString().slice(0,10); document.getElementById('citizenStatus').value=statuses[0]; document.getElementById('citizenPower').value=works[0]; document.getElementById('citizenActivity').value='Активный'; document.getElementById('citizenDuty').value=duties[0]; document.getElementById('citizenModalTitle').innerText='➕ Добавить гражданина'; document.getElementById('editCitizenModal').style.display='flex'; }
+    function closeEditCitizenModal() { document.getElementById('editCitizenModal').style.display='none'; }
+    function openEditCitizenModal(id) { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const citizen = citizensData.find(c => c.id === id); if(!citizen) return; updateSelects(); document.getElementById('editCitizenId').value=citizen.id; document.getElementById('citizenFullName').value=citizen.fullName; document.getElementById('citizenMinecraft').value=citizen.minecraft; document.getElementById('citizenDiscord').value=citizen.discord; document.getElementById('citizenJoinDate').value=citizen.joinDate; document.getElementById('citizenStatus').value=citizen.status; document.getElementById('citizenPower').value=citizen.powerStatus; document.getElementById('citizenActivity').value=citizen.activity; document.getElementById('citizenDuty').value=citizen.militaryDuty; document.getElementById('citizenModalTitle').innerText='✏️ Редактировать гражданина'; document.getElementById('editCitizenModal').style.display='flex'; }
+    function deleteCitizen(id) { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } showConfirm("Удаление", "Удалить этого гражданина?", (ok) => { if(ok) { citizensData = citizensData.filter(c => c.id !== id); showToast("Гражданин удален!"); renderCitizensTable(); } }); }
+    document.getElementById('saveCitizenBtn').onclick = () => { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const id = document.getElementById('editCitizenId').value; const fullName = document.getElementById('citizenFullName').value.trim(); const minecraft = document.getElementById('citizenMinecraft').value.trim(); const discord = document.getElementById('citizenDiscord').value.trim(); const joinDate = document.getElementById('citizenJoinDate').value; const status = document.getElementById('citizenStatus').value; const power = document.getElementById('citizenPower').value; const activity = document.getElementById('citizenActivity').value; const duty = document.getElementById('citizenDuty').value; if(!fullName || !minecraft || !discord || !joinDate){ showAlert("Заполните все поля!"); return; } if(id === '') { citizensData.push({ id: nextCitizenId++, fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty }); showToast("Гражданин добавлен!"); } else { const idx = citizensData.findIndex(c => c.id === parseInt(id)); if(idx !== -1) { citizensData[idx] = { id: parseInt(id), fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty }; showToast("Гражданин обновлен!"); } } closeEditCitizenModal(); renderCitizensTable(); };
     
-    function openAddCitizenModal() {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        updateSelects();
-        document.getElementById('editCitizenId').value = '';
-        document.getElementById('citizenFullName').value = '';
-        document.getElementById('citizenMinecraft').value = '';
-        document.getElementById('citizenDiscord').value = '';
-        document.getElementById('citizenJoinDate').value = new Date().toISOString().slice(0,10);
-        document.getElementById('citizenStatus').value = statuses[0];
-        document.getElementById('citizenPower').value = works[0];
-        document.getElementById('citizenActivity').value = 'Активный';
-        document.getElementById('citizenDuty').value = duties[0];
-        document.getElementById('citizenModalTitle').innerText = '➕ Добавить гражданина';
-        document.getElementById('editCitizenModal').style.display = 'flex';
-    }
+    // Редактор тегов
+    function openTagEditorModal() { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } document.getElementById('tagEditorBody').innerHTML = `<div class="tag-editor-section"><h3>Статусы</h3><div class="tag-list">${statuses.map(s => `<div class="tag-item"><span>${escapeHtml(s)}</span><button onclick="editTagPrompt('status','${escapeHtml(s)}')">✏️</button><button onclick="deleteTagConfirm('status','${escapeHtml(s)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('status')">+ Добавить</button></div><div class="tag-editor-section"><h3>Работы</h3><div class="tag-list">${works.map(w => `<div class="tag-item"><span>${escapeHtml(w)}</span><button onclick="editTagPrompt('work','${escapeHtml(w)}')">✏️</button><button onclick="deleteTagConfirm('work','${escapeHtml(w)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('work')">+ Добавить</button></div><div class="tag-editor-section"><h3>Обязанности</h3><div class="tag-list">${duties.map(d => `<div class="tag-item"><span>${escapeHtml(d)}</span><button onclick="editTagPrompt('duty','${escapeHtml(d)}')">✏️</button><button onclick="deleteTagConfirm('duty','${escapeHtml(d)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('duty')">+ Добавить</button></div><button class="action-btn" onclick="closeTagEditorModal()">Закрыть</button>`; document.getElementById('tagEditorModal').style.display='flex'; }
+    function closeTagEditorModal() { document.getElementById('tagEditorModal').style.display='none'; }
+    function addTagPrompt(type) { const names={status:"статус",work:"работу",duty:"статус обязанности"}; const val=prompt(`Введите новый ${names[type]}:`); if(val&&val.trim()){ if(type==='status'&&!statuses.includes(val.trim())){ statuses.push(val.trim()); saveTags(); updateSelects(); openTagEditorModal(); renderCitizensTable(); showToast(`Статус "${val}" добавлен`); } else if(type==='work'&&!works.includes(val.trim())){ works.push(val.trim()); saveTags(); updateSelects(); openTagEditorModal(); renderCitizensTable(); showToast(`Работа "${val}" добавлена`); } else if(type==='duty'&&!duties.includes(val.trim())){ duties.push(val.trim()); saveTags(); updateSelects(); openTagEditorModal(); renderCitizensTable(); showToast(`Статус "${val}" добавлен`); } else showAlert("Такой элемент уже существует!"); } }
+    function editTagPrompt(type,oldVal){ const names={status:"статус",work:"работу",duty:"статус обязанности"}; const newVal=prompt(`Редактировать ${names[type]} "${oldVal}":`,oldVal); if(newVal&&newVal.trim()&&newVal!==oldVal){ if(type==='status'){ const idx=statuses.indexOf(oldVal); if(idx!==-1){ citizensData.forEach(c=>{if(c.status===oldVal)c.status=newVal.trim();}); statuses[idx]=newVal.trim(); } } else if(type==='work'){ const idx=works.indexOf(oldVal); if(idx!==-1){ citizensData.forEach(c=>{if(c.powerStatus===oldVal)c.powerStatus=newVal.trim();}); works[idx]=newVal.trim(); } } else if(type==='duty'){ const idx=duties.indexOf(oldVal); if(idx!==-1){ citizensData.forEach(c=>{if(c.militaryDuty===oldVal)c.militaryDuty=newVal.trim();}); duties[idx]=newVal.trim(); } } saveTags(); updateSelects(); openTagEditorModal(); renderCitizensTable(); showToast("Тег обновлен!"); } }
+    function deleteTagConfirm(type,val){ if((type==='status'&&statuses.length<=1)||(type==='work'&&works.length<=1)||(type==='duty'&&duties.length<=1)){ showAlert("Нельзя удалить последний элемент!"); return; } showConfirm("Удаление",`Удалить "${val}"?`,(ok)=>{ if(ok){ if(type==='status'){ const newArr=statuses.filter(s=>s!==val); citizensData.forEach(c=>{if(c.status===val)c.status=newArr[0];}); statuses.length=0; statuses.push(...newArr); } else if(type==='work'){ const newArr=works.filter(w=>w!==val); citizensData.forEach(c=>{if(c.powerStatus===val)c.powerStatus=newArr[0];}); works.length=0; works.push(...newArr); } else if(type==='duty'){ const newArr=duties.filter(d=>d!==val); citizensData.forEach(c=>{if(c.militaryDuty===val)c.militaryDuty=newArr[0];}); duties.length=0; duties.push(...newArr); } saveTags(); updateSelects(); openTagEditorModal(); renderCitizensTable(); showToast("Элемент удален"); } }); }
     
-    function openEditCitizenModal(id) {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const citizen = citizensData.find(c => c.id === id);
-        if(!citizen) return;
-        updateSelects();
-        document.getElementById('editCitizenId').value = citizen.id;
-        document.getElementById('citizenFullName').value = citizen.fullName;
-        document.getElementById('citizenMinecraft').value = citizen.minecraft;
-        document.getElementById('citizenDiscord').value = citizen.discord;
-        document.getElementById('citizenJoinDate').value = citizen.joinDate;
-        document.getElementById('citizenStatus').value = citizen.status;
-        document.getElementById('citizenPower').value = citizen.powerStatus;
-        document.getElementById('citizenActivity').value = citizen.activity;
-        document.getElementById('citizenDuty').value = citizen.militaryDuty;
-        document.getElementById('citizenModalTitle').innerText = '✏️ Редактировать гражданина';
-        document.getElementById('editCitizenModal').style.display = 'flex';
-    }
+    function openEventsManageModal() { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } document.getElementById('eventsManageModalBody').innerHTML = `<div style="max-height:50vh; overflow-y:auto;">${eventsData.map(ev => `<div style="border-bottom:1px solid rgba(255,215,0,0.15); padding:0.7rem; display:flex; justify-content:space-between;"><div><strong style="color:#ffd700;">${escapeHtml(ev.title)}</strong><br><span style="color:rgba(255,255,255,0.7); font-size:0.8rem;">${escapeHtml(ev.description)}</span></div><div><button class="small-btn edit" onclick="openEditEventModal(${ev.id}); closeEventsManageModal();">✏️</button><button class="small-btn delete" onclick="deleteEventById(${ev.id})">🗑️</button></div></div>`).join('')}</div><div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="openAddEventModal(); closeEventsManageModal();">➕ Добавить событие</button><button class="action-btn" onclick="closeEventsManageModal()">Закрыть</button></div>`; document.getElementById('eventsManageModal').style.display='flex'; }
+    function closeEventsManageModal() { document.getElementById('eventsManageModal').style.display='none'; }
+    function openAddEventModal() { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } document.getElementById('newEventName').value=''; document.getElementById('newEventDesc').value=''; document.getElementById('newEventFullStory').value=''; document.getElementById('newEventImage').value=''; document.getElementById('addEventModal').style.display='flex'; }
+    function closeAddEventModal() { document.getElementById('addEventModal').style.display='none'; }
+    document.getElementById('confirmAddEventBtn').onclick = () => { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const title = document.getElementById('newEventName').value.trim(); const desc = document.getElementById('newEventDesc').value.trim(); const full = document.getElementById('newEventFullStory').value.trim(); const img = document.getElementById('newEventImage').value.trim(); if(!title || !desc || !full){ showAlert("Заполните все поля!"); return; } eventsData.push({ id: nextEventId++, title, description: desc, fullStory: full, image: img || "https://placehold.co/600x400/2d2d2d/ffd700?text=Event" }); saveEvents(); showToast("Событие добавлено!"); closeAddEventModal(); renderHomePage(); };
+    function openEditEventModal(id) { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const ev = eventsData.find(e => e.id === id); if(!ev) return; document.getElementById('editEventId').value = ev.id; document.getElementById('editEventName').value = ev.title; document.getElementById('editEventDesc').value = ev.description; document.getElementById('editEventFullStory').value = ev.fullStory; document.getElementById('editEventImage').value = ev.image; document.getElementById('editEventModal').style.display='flex'; }
+    function closeEditEventModal() { document.getElementById('editEventModal').style.display='none'; }
+    document.getElementById('saveEventBtn').onclick = () => { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const id = parseInt(document.getElementById('editEventId').value); const idx = eventsData.findIndex(e => e.id === id); if(idx !== -1) { eventsData[idx] = { id, title: document.getElementById('editEventName').value.trim(), description: document.getElementById('editEventDesc').value.trim(), fullStory: document.getElementById('editEventFullStory').value.trim(), image: document.getElementById('editEventImage').value.trim() || "https://placehold.co/600x400/2d2d2d/ffd700?text=Event" }; saveEvents(); showToast("Событие обновлено!"); closeEditEventModal(); renderHomePage(); } };
+    document.getElementById('deleteEventBtn').onclick = () => { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } const id = parseInt(document.getElementById('editEventId').value); showConfirm("Удаление", "Удалить это событие?", (ok) => { if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); closeEditEventModal(); renderHomePage(); } }); };
+    function deleteEventById(id) { if(!isAdmin){ showAlert("Доступ только для администратора!"); return; } showConfirm("Удаление", "Удалить это событие?", (ok) => { if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); renderHomePage(); } }); }
     
-    function closeEditCitizenModal() { document.getElementById('editCitizenModal').style.display = 'none'; }
+    function showFullStory(ev) { document.getElementById('storyModalTitle').innerText = ev.title; document.getElementById('storyModalBody').innerHTML = `<img src="${ev.image}" style="width:100%; border-radius:20px; margin-bottom:1rem; border:1px solid rgba(255,215,0,0.3);" onerror="this.src='https://placehold.co/600x400/2d2d2d/ffd700?text=No+Image'"><p style="color:rgba(255,255,255,0.85); line-height:1.6;">${ev.fullStory}</p><div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="closeStoryModal()">Закрыть</button></div>`; document.getElementById('storyModal').style.display='flex'; }
+    function closeStoryModal() { document.getElementById('storyModal').style.display='none'; }
     
-    document.getElementById('saveCitizenBtn').onclick = () => {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const id = document.getElementById('editCitizenId').value;
-        const fullName = document.getElementById('citizenFullName').value.trim();
-        const minecraft = document.getElementById('citizenMinecraft').value.trim();
-        const discord = document.getElementById('citizenDiscord').value.trim();
-        const joinDate = document.getElementById('citizenJoinDate').value;
-        const status = document.getElementById('citizenStatus').value;
-        const power = document.getElementById('citizenPower').value;
-        const activity = document.getElementById('citizenActivity').value;
-        const duty = document.getElementById('citizenDuty').value;
-        if(!fullName || !minecraft || !discord || !joinDate) { showAlert("Заполните все поля!"); return; }
-        if(id === '') {
-            citizensData.push({ id: nextCitizenId++, fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty });
-            showToast("Гражданин добавлен!");
-        } else {
-            const idx = citizensData.findIndex(c => c.id === parseInt(id));
-            if(idx !== -1) {
-                citizensData[idx] = { id: parseInt(id), fullName, minecraft, discord, joinDate, status, powerStatus: power, activity, militaryDuty: duty };
-                showToast("Гражданин обновлен!");
-            }
-        }
-        closeEditCitizenModal();
-        renderCitizensTable();
-    };
+    function showConstitution() { const modal = document.createElement('div'); modal.className='modal-overlay'; modal.style.display='flex'; modal.innerHTML=`<div class="modal-container" style="max-width:750px;"><div class="modal-header"><h2>📜 Конституция</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div><div class="modal-body constitution-container"><div class="constitution-text"><strong>Основные положения:</strong><br><br><ol><li>Основные управленцы - люди с ролью "Лидер".</li><li>Штат Калифорния - единоличное образование.</li><li>Название сквада и страны - равнозначны.</li><li>Публичная власть поддерживает многообразие.</li><li>Законодательство обязательно, конституция превыше.</li><li>Сквад - социальное устройство.</li><li>Преобладают капиталистические отношения.</li><li>Законодательство, экономика, армия - общие.</li><li>Сквад един и неделим.</li><li>Все граждане под защитой.</li><li>Автономные области имеют особые права.</li></ol></div></div></div>`; document.body.appendChild(modal); modal.addEventListener('click',(e)=>{if(e.target===modal)modal.remove();}); }
+    function showLegislation() { const modal = document.createElement('div'); modal.className='modal-overlay'; modal.style.display='flex'; modal.innerHTML=`<div class="modal-container small"><div class="modal-header"><h2>⚖️ Законодательство</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div><div class="modal-body" style="text-align:center;"><div style="font-size:3rem;">🔒</div><div style="color:rgba(255,255,255,0.7);">В процессе разработки</div><button class="action-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button></div></div>`; document.body.appendChild(modal); modal.addEventListener('click',(e)=>{if(e.target===modal)modal.remove();}); }
     
-    function deleteCitizen(id) {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        showConfirm("Удаление", "Удалить этого гражданина?", (ok) => {
-            if(ok) {
-                citizensData = citizensData.filter(c => c.id !== id);
-                showToast("Гражданин удален!");
-                renderCitizensTable();
-            }
-        });
-    }
+    function renderGovernmentPage() { document.getElementById('dynamicPanel').innerHTML = `<div class="hero-header"><div class="hero-bg"></div><h1>🏛️ Правительство</h1></div><div class="government-cards"><div class="gov-card" onclick="showConstitution()"><div class="gov-card-icon">📜</div><h2>Конституция</h2><p>Основной закон</p></div><div class="gov-card" onclick="showLegislation()"><div class="gov-card-icon">⚖️</div><h2>Законодательство</h2><p>Нормативные акты</p></div></div><div style="text-align:center;"><button class="action-btn" id="backToHomeBtn">← На главную</button></div>`; document.getElementById('backToHomeBtn').onclick = () => { currentPage = 'home'; renderHomePage(); }; }
+    function renderAllEventsPage() { document.getElementById('dynamicPanel').innerHTML = `<div class="hero-header"><div class="hero-bg"></div><h1>Все события сквада</h1></div><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.5rem;">${eventsData.map(ev => `<div class="main-event-card"><img class="main-event-img" style="height:180px;" src="${ev.image}" onerror="this.src='https://placehold.co/600x400/2d2d2d/ffd700?text=Event'"><div class="main-event-content"><div class="main-event-title" style="font-size:1.2rem;">${escapeHtml(ev.title)}</div><div class="main-event-desc" style="font-size:0.85rem;">${escapeHtml(ev.description)}</div><button class="story-btn" onclick='showFullStory(${JSON.stringify(ev).replace(/'/g, "\\'")})'>📖 Читать историю</button></div></div>`).join('')}</div><div style="text-align:center;"><button class="action-btn" id="backToHomeBtn">← На главную</button></div>`; document.getElementById('backToHomeBtn').onclick = () => { currentPage = 'home'; renderHomePage(); }; }
+    function renderHomePage() { const mainEvent = eventsData[0]; document.getElementById('dynamicPanel').innerHTML = `<div class="hero-header"><div class="hero-bg"></div><h1>Custom Squad</h1></div><div class="main-event"><div class="main-event-card"><img class="main-event-img" src="${mainEvent.image}" onerror="this.src='https://placehold.co/800x400/2d2d2d/ffd700?text=Event'"><div class="main-event-content"><div class="main-event-title">${escapeHtml(mainEvent.title)}</div><div class="main-event-desc">${escapeHtml(mainEvent.description)}</div><button class="story-btn" onclick='showFullStory(${JSON.stringify(mainEvent).replace(/'/g, "\\'")})'>📖 Читать полную историю</button></div></div></div><div style="text-align:center;"><button class="action-btn" id="viewAllEventsBtn">📋 Все события (${eventsData.length})</button><button class="action-btn" id="showCitizensTableBtn">📋 Таблица граждан</button><button class="action-btn government-btn" id="governmentBtn">🏛️ Правительство</button></div>`; document.getElementById('viewAllEventsBtn').onclick = () => { currentPage = 'allEvents'; renderAllEventsPage(); }; document.getElementById('showCitizensTableBtn').onclick = openCitizensModal; document.getElementById('governmentBtn').onclick = () => { currentPage = 'government'; renderGovernmentPage(); }; }
+    function renderPage() { if(currentPage === 'home') renderHomePage(); else if(currentPage === 'allEvents') renderAllEventsPage(); else if(currentPage === 'government') renderGovernmentPage(); }
     
-    // ========== РЕДАКТОР ТЕГОВ ==========
-    function openTagEditorModal() {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        renderTagEditor();
-        document.getElementById('tagEditorModal').style.display = 'flex';
-    }
-    function closeTagEditorModal() { document.getElementById('tagEditorModal').style.display = 'none'; }
-    
-    function renderTagEditor() {
-        document.getElementById('tagEditorBody').innerHTML = `
-            <div class="tag-editor-section"><h3>📋 Статусы граждан</h3><div class="tag-list">${statuses.map(s => `<div class="tag-item"><span>${escapeHtml(s)}</span><button onclick="editTag('status','${escapeHtml(s)}')">✏️</button><button onclick="deleteTag('status','${escapeHtml(s)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('status')">+ Добавить статус</button></div>
-            <div class="tag-editor-section"><h3>💼 Работы / Должности</h3><div class="tag-list">${works.map(w => `<div class="tag-item"><span>${escapeHtml(w)}</span><button onclick="editTag('work','${escapeHtml(w)}')">✏️</button><button onclick="deleteTag('work','${escapeHtml(w)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('work')">+ Добавить работу</button></div>
-            <div class="tag-editor-section"><h3>⚔️ Воинская обязанность</h3><div class="tag-list">${duties.map(d => `<div class="tag-item"><span>${escapeHtml(d)}</span><button onclick="editTag('duty','${escapeHtml(d)}')">✏️</button><button onclick="deleteTag('duty','${escapeHtml(d)}')">🗑️</button></div>`).join('')}</div><button class="add-tag-btn" onclick="addTagPrompt('duty')">+ Добавить статус</button></div>
-            <button class="action-btn" onclick="closeTagEditorModal()">Закрыть</button>
-        `;
-    }
-    
-    function addTagPrompt(type) {
-        const names = { status: "статус", work: "работу", duty: "статус обязанности" };
-        const val = prompt(`Введите новый ${names[type]}:`);
-        if(val && val.trim()) {
-            if(type === 'status' && !statuses.includes(val.trim())) { statuses.push(val.trim()); saveTags(); updateSelects(); renderTagEditor(); renderCitizensTable(); showToast(`Статус "${val}" добавлен`); }
-            else if(type === 'work' && !works.includes(val.trim())) { works.push(val.trim()); saveTags(); updateSelects(); renderTagEditor(); renderCitizensTable(); showToast(`Работа "${val}" добавлена`); }
-            else if(type === 'duty' && !duties.includes(val.trim())) { duties.push(val.trim()); saveTags(); updateSelects(); renderTagEditor(); renderCitizensTable(); showToast(`Статус "${val}" добавлен`); }
-            else showAlert("Такой элемент уже существует!");
-        }
-    }
-    
-    function editTag(type, oldVal) {
-        const names = { status: "статус", work: "работу", duty: "статус обязанности" };
-        const newVal = prompt(`Редактировать ${names[type]} "${oldVal}":`, oldVal);
-        if(newVal && newVal.trim() && newVal !== oldVal) {
-            if(type === 'status') {
-                const idx = statuses.indexOf(oldVal);
-                if(idx !== -1) { citizensData.forEach(c => { if(c.status === oldVal) c.status = newVal.trim(); }); statuses[idx] = newVal.trim(); }
-            } else if(type === 'work') {
-                const idx = works.indexOf(oldVal);
-                if(idx !== -1) { citizensData.forEach(c => { if(c.powerStatus === oldVal) c.powerStatus = newVal.trim(); }); works[idx] = newVal.trim(); }
-            } else if(type === 'duty') {
-                const idx = duties.indexOf(oldVal);
-                if(idx !== -1) { citizensData.forEach(c => { if(c.militaryDuty === oldVal) c.militaryDuty = newVal.trim(); }); duties[idx] = newVal.trim(); }
-            }
-            saveTags(); updateSelects(); renderTagEditor(); renderCitizensTable(); showToast("Тег обновлен!");
-        }
-    }
-    
-    function deleteTag(type, val) {
-        if((type === 'status' && statuses.length <= 1) || (type === 'work' && works.length <= 1) || (type === 'duty' && duties.length <= 1)) { showAlert("Нельзя удалить последний элемент!"); return; }
-        showConfirm("Удаление", `Удалить "${val}"? Граждане получат первый элемент из списка.`, (ok) => {
-            if(ok) {
-                if(type === 'status') {
-                    const newArr = statuses.filter(s => s !== val);
-                    citizensData.forEach(c => { if(c.status === val) c.status = newArr[0]; });
-                    statuses.length = 0; statuses.push(...newArr);
-                } else if(type === 'work') {
-                    const newArr = works.filter(w => w !== val);
-                    citizensData.forEach(c => { if(c.powerStatus === val) c.powerStatus = newArr[0]; });
-                    works.length = 0; works.push(...newArr);
-                } else {
-                    const newArr = duties.filter(d => d !== val);
-                    citizensData.forEach(c => { if(c.militaryDuty === val) c.militaryDuty = newArr[0]; });
-                    duties.length = 0; duties.push(...newArr);
-                }
-                saveTags(); updateSelects(); renderTagEditor(); renderCitizensTable(); showToast("Элемент удален");
-            }
-        });
-    }
-    
-    // ========== УПРАВЛЕНИЕ СОБЫТИЯМИ ==========
-    function openEventsManageModal() {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        document.getElementById('eventsManageModalBody').innerHTML = `
-            <div style="max-height:50vh; overflow-y:auto;">${eventsData.map(ev => `<div style="border-bottom:1px solid rgba(255,215,0,0.15); padding:0.7rem; display:flex; justify-content:space-between; align-items:center;"><div><strong style="color:#ffd700;">${escapeHtml(ev.title)}</strong><br><span style="color:rgba(255,255,255,0.7); font-size:0.8rem;">${escapeHtml(ev.description)}</span></div><div><button class="small-btn edit" onclick="openEditEventModal(${ev.id}); closeEventsManageModal();">✏️</button><button class="small-btn delete" onclick="deleteEventById(${ev.id})">🗑️</button></div></div>`).join('')}</div>
-            <div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="openAddEventModal(); closeEventsManageModal();">➕ Добавить событие</button><button class="action-btn" onclick="closeEventsManageModal()">Закрыть</button></div>
-        `;
-        document.getElementById('eventsManageModal').style.display = 'flex';
-    }
-    function closeEventsManageModal() { document.getElementById('eventsManageModal').style.display = 'none'; }
-    
-    function openAddEventModal() {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        document.getElementById('newEventName').value = '';
-        document.getElementById('newEventDesc').value = '';
-        document.getElementById('newEventFullStory').value = '';
-        document.getElementById('newEventImage').value = '';
-        document.getElementById('addEventModal').style.display = 'flex';
-    }
-    function closeAddEventModal() { document.getElementById('addEventModal').style.display = 'none'; }
-    
-    document.getElementById('confirmAddEventBtn').onclick = () => {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const title = document.getElementById('newEventName').value.trim();
-        const desc = document.getElementById('newEventDesc').value.trim();
-        const full = document.getElementById('newEventFullStory').value.trim();
-        const img = document.getElementById('newEventImage').value.trim();
-        if(!title || !desc || !full) { showAlert("Заполните все поля!"); return; }
-        eventsData.push({ id: nextEventId++, title, description: desc, fullStory: full, image: img || "https://placehold.co/600x400/2d2d2d/ffd700?text=Event" });
-        saveEvents(); showToast("Событие добавлено!"); closeAddEventModal(); renderHomePage();
-    };
-    
-    function openEditEventModal(id) {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const ev = eventsData.find(e => e.id === id);
-        if(!ev) return;
-        document.getElementById('editEventId').value = ev.id;
-        document.getElementById('editEventName').value = ev.title;
-        document.getElementById('editEventDesc').value = ev.description;
-        document.getElementById('editEventFullStory').value = ev.fullStory;
-        document.getElementById('editEventImage').value = ev.image;
-        document.getElementById('editEventModal').style.display = 'flex';
-    }
-    function closeEditEventModal() { document.getElementById('editEventModal').style.display = 'none'; }
-    
-    document.getElementById('saveEventBtn').onclick = () => {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const id = parseInt(document.getElementById('editEventId').value);
-        const idx = eventsData.findIndex(e => e.id === id);
-        if(idx !== -1) {
-            eventsData[idx] = {
-                id, title: document.getElementById('editEventName').value.trim(),
-                description: document.getElementById('editEventDesc').value.trim(),
-                fullStory: document.getElementById('editEventFullStory').value.trim(),
-                image: document.getElementById('editEventImage').value.trim() || "https://placehold.co/600x400/2d2d2d/ffd700?text=Event"
-            };
-            saveEvents(); showToast("Событие обновлено!"); closeEditEventModal(); renderHomePage();
-        }
-    };
-    document.getElementById('deleteEventBtn').onclick = () => {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        const id = parseInt(document.getElementById('editEventId').value);
-        showConfirm("Удаление", "Удалить это событие?", (ok) => {
-            if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); closeEditEventModal(); renderHomePage(); }
-        });
-    };
-    
-    function deleteEventById(id) {
-        if(!isAdmin) { showAlert("Доступ только для администратора!"); return; }
-        showConfirm("Удаление", "Удалить это событие?", (ok) => {
-            if(ok) { eventsData = eventsData.filter(e => e.id !== id); saveEvents(); showToast("Событие удалено!"); renderHomePage(); }
-        });
-    }
-    
-    // ========== СТРАНИЦЫ ==========
-    function showFullStory(ev) {
-        document.getElementById('storyModalTitle').innerText = ev.title;
-        document.getElementById('storyModalBody').innerHTML = `<img src="${ev.image}" style="width:100%; border-radius:20px; margin-bottom:1rem; border:1px solid rgba(255,215,0,0.3);" onerror="this.src='https://placehold.co/600x400/2d2d2d/ffd700?text=No+Image'"><p style="color:rgba(255,255,255,0.85); line-height:1.6;">${ev.fullStory}</p><div style="text-align:center; margin-top:1rem;"><button class="action-btn" onclick="closeStoryModal()">Закрыть</button></div>`;
-        document.getElementById('storyModal').style.display = 'flex';
-    }
-    function closeStoryModal() { document.getElementById('storyModal').style.display = 'none'; }
-    
-    function showConstitution() {
-        const modal = document.createElement('div'); modal.className = 'modal-overlay'; modal.style.display = 'flex';
-        modal.innerHTML = `<div class="modal-container" style="max-width:750px;"><div class="modal-header"><h2>📜 Конституция</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div><div class="modal-body constitution-container"><div class="constitution-text"><strong>Основные положения и конституционный строй сквада</strong><br><br><ol><li>Основные управленцы сквада - люди, прописанные в таблице сквада с ролью "Лидер".</li><li>Штат Калифорния - единоличное образование с 1 центральным лидером.</li><li>Название сквада и страны - равнозначные понятия.</li><li>Публичная власть поддерживает идеологическое многообразие.</li><li>Законодательство обязательно для исполнения, конституция превыше.</li><li>Сквад - социальное устройство, гарантирующее справедливость.</li><li>В скваде преобладают капиталистические отношения.</li><li>Законодательство, экономика, армия - общие для всех.</li><li>Сквад един и неделим.</li><li>Все граждане под защитой сквада.</li><li>Автономные области имеют особые права.</li><li>Передача земель или ресурсов без одобрения не допускается.</li></ol></div></div></div>`;
-        document.body.appendChild(modal); modal.addEventListener('click', (e) => { if(e.target === modal) modal.remove(); });
-    }
-    
-    function showLegislation() {
-        const modal = document.createElement('div'); modal.className = 'modal-overlay'; modal.style.display = 'flex';
-        modal.innerHTML = `<div class="modal-container small"><div class="modal-header"><h2>⚖️ Законодательство</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div><div class="modal-body" style="text-align:center;"><div style="font-size:3rem; margin-bottom:0.8rem;">🔒</div><div style="color:rgba(255,255,255,0.7); margin-bottom:1rem;">В процессе разработки</div><button class="action-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button></div></div>`;
-        document.body.appendChild(modal); modal.addEventListener('click', (e) => { if(e.target === modal) modal.remove(); });
-    }
-    
-    function renderGovernmentPage() {
-        document.getElementById('dynamicPanel').innerHTML = `
-            <div class="hero-header"><div class="hero-bg"></div><h1>🏛️ Правительство</h1></div>
-            <div class="government-cards"><div class="gov-card" onclick="showConstitution()"><div class="gov-card-icon">📜</div><h2>Конституция</h2><p>Основной закон сквада</p></div><div class="gov-card" onclick="showLegislation()"><div class="gov-card-icon">⚖️</div><h2>Законодательство</h2><p>Нормативно-правовые акты</p></div></div>
-            <div style="text-align:center;"><button class="action-btn" id="backToHomeBtn">← На главную</button></div>
-        `;
-        document.getElementById('backToHomeBtn').onclick = () => { currentPage = 'home'; renderHomePage(); };
-    }
-    
-    function renderAllEventsPage() {
-        document.getElementById('dynamicPanel').innerHTML = `
-            <div class="hero-header"><div class="hero-bg"></div><h1>Все события сквада</h1></div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.5rem;">${eventsData.map(ev => `<div class="main-event-card"><img class="main-event-img" style="height:180px;" src="${ev.image}" onerror="this.src='https://placehold.co/600x400/2d2d2d/ffd700?text=Event'"><div class="main-event-content"><div class="main-event-title" style="font-size:1.2rem;">${escapeHtml(ev.title)}</div><div class="main-event-desc" style="font-size:0.85rem;">${escapeHtml(ev.description)}</div><button class="story-btn" onclick='showFullStory(${JSON.stringify(ev).replace(/'/g, "\\'")})'>📖 Читать историю</button></div></div>`).join('')}</div>
-            <div style="text-align:center; margin-top:1.5rem;"><button class="action-btn" id="backToHomeBtn">← На главную</button></div>
-        `;
-        document.getElementById('backToHomeBtn').onclick = () => { currentPage = 'home'; renderHomePage(); };
-    }
-    
-    function renderHomePage() {
-        const mainEvent = eventsData[0];
-        document.getElementById('dynamicPanel').innerHTML = `
-            <div class="hero-header"><div class="hero-bg"></div><h1>Custom Squad</h1></div>
-            <div class="main-event"><div class="main-event-card"><img class="main-event-img" src="${mainEvent.image}" onerror="this.src='https://placehold.co/800x400/2d2d2d/ffd700?text=Event'"><div class="main-event-content"><div class="main-event-title">${escapeHtml(mainEvent.title)}</div><div class="main-event-desc">${escapeHtml(mainEvent.description)}</div><button class="story-btn" onclick='showFullStory(${JSON.stringify(mainEvent).replace(/'/g, "\\'")})'>📖 Читать полную историю</button></div></div></div>
-            <div style="text-align:center;"><button class="action-btn" id="viewAllEventsBtn">📋 Все события (${eventsData.length})</button><button class="action-btn" id="showCitizensTableBtn">📋 Таблица граждан</button><button class="action-btn government-btn" id="governmentBtn">🏛️ Правительство</button></div>
-        `;
-        document.getElementById('viewAllEventsBtn').onclick = () => { currentPage = 'allEvents'; renderAllEventsPage(); };
-        document.getElementById('showCitizensTableBtn').onclick = openCitizensModal;
-        document.getElementById('governmentBtn').onclick = () => { currentPage = 'government'; renderGovernmentPage(); };
-    }
-    
-    function renderPage() {
-        if(currentPage === 'home') renderHomePage();
-        else if(currentPage === 'allEvents') renderAllEventsPage();
-        else if(currentPage === 'government') renderGovernmentPage();
-    }
-    
-    // ========== АДМИН СИСТЕМА ==========
-    function updateAdminUI() {
-        const st = document.getElementById('adminStatusText');
-        const nm = document.getElementById('adminNameDisplay');
-        if(isAdmin) { st.innerText = 'Администратор'; nm.innerText = 'Adminchik'; }
-        else { st.innerText = 'Не авторизован'; nm.innerText = 'Админ'; }
-    }
-    
-    document.getElementById('adminCornerBtn').onclick = () => {
-        if(isAdmin) document.getElementById('adminPanelModal').style.display = 'flex';
-        else document.getElementById('adminAuthModal').style.display = 'flex';
-    };
+    // Админ система
+    function updateAdminUI() { const st = document.getElementById('adminStatusText'); const nm = document.getElementById('adminNameDisplay'); if(isAdmin) { st.innerText = 'Администратор'; nm.innerText = 'Adminchik'; } else { st.innerText = 'Не авторизован'; nm.innerText = 'Админ'; } }
     function closeAdminPanel() { document.getElementById('adminPanelModal').style.display = 'none'; }
-    
-    document.getElementById('logoutAdminBtn').onclick = () => {
-        showConfirm("Выход", "Выйти из режима администратора?", (ok) => {
-            if(ok) { localStorage.setItem('custom_squad_admin', 'false'); isAdmin = false; updateAdminUI(); showToast("Вы вышли из админки"); closeAdminPanel(); renderHomePage(); }
-        });
-    };
-    
-    document.getElementById('submitAdminAuth').onclick = () => {
-        const l = document.getElementById('adminLogin').value.trim();
-        const p = document.getElementById('adminPassword').value.trim();
-        if(!l || !p) showAlert("Заполните поля!");
-        else if(isMasterAdmin(l,p)) {
-            localStorage.setItem('custom_squad_admin', 'true');
-            isAdmin = true;
-            showToast(`Добро пожаловать, ${l}!`);
-            document.getElementById('adminAuthModal').style.display = 'none';
-            updateAdminUI();
-            renderHomePage();
-        } else showAlert("Неверный логин или пароль!");
-    };
+    document.getElementById('adminCornerBtn').onclick = () => { if(isAdmin) document.getElementById('adminPanelModal').style.display = 'flex'; else document.getElementById('adminAuthModal').style.display = 'flex'; };
+    document.getElementById('logoutAdminBtn').onclick = () => { showConfirm("Выход", "Выйти из режима администратора?", (ok) => { if(ok) { localStorage.setItem('custom_squad_admin', 'false'); isAdmin = false; updateAdminUI(); showToast("Вы вышли из админки"); closeAdminPanel(); renderHomePage(); } }); };
+    document.getElementById('submitAdminAuth').onclick = () => { const l = document.getElementById('adminLogin').value.trim(); const p = document.getElementById('adminPassword').value.trim(); if(!l || !p) showAlert("Заполните поля!"); else if(isMasterAdmin(l,p)) { localStorage.setItem('custom_squad_admin', 'true'); isAdmin = true; showToast(`Добро пожаловать, ${l}!`); document.getElementById('adminAuthModal').style.display = 'none'; updateAdminUI(); renderHomePage(); } else showAlert("Неверный логин или пароль!"); };
     document.getElementById('closeAdminAuth').onclick = () => document.getElementById('adminAuthModal').style.display = 'none';
-    
-    // Закрытие модалок по клику на фон
-    window.onclick = (e) => {
-        if(e.target === document.getElementById('adminAuthModal')) document.getElementById('adminAuthModal').style.display = 'none';
-        if(e.target === document.getElementById('citizensModal')) closeCitizensModal();
-        if(e.target === document.getElementById('storyModal')) closeStoryModal();
-        if(e.target === document.getElementById('adminPanelModal')) closeAdminPanel();
-        if(e.target === document.getElementById('editCitizenModal')) closeEditCitizenModal();
-        if(e.target === document.getElementById('tagEditorModal')) closeTagEditorModal();
-        if(e.target === document.getElementById('eventsManageModal')) closeEventsManageModal();
-        if(e.target === document.getElementById('addEventModal')) closeAddEventModal();
-        if(e.target === document.getElementById('editEventModal')) closeEditEventModal();
-    };
-    
+    window.onclick = (e) => { if(e.target === document.getElementById('adminAuthModal')) document.getElementById('adminAuthModal').style.display = 'none'; if(e.target === document.getElementById('citizensModal')) closeCitizensModal(); if(e.target === document.getElementById('storyModal')) closeStoryModal(); if(e.target === document.getElementById('adminPanelModal')) closeAdminPanel(); if(e.target === document.getElementById('editCitizenModal')) closeEditCitizenModal(); if(e.target === document.getElementById('tagEditorModal')) closeTagEditorModal(); if(e.target === document.getElementById('eventsManageModal')) closeEventsManageModal(); if(e.target === document.getElementById('addEventModal')) closeAddEventModal(); if(e.target === document.getElementById('editEventModal')) closeEditEventModal(); };
     updateAdminUI();
     
-    window.addEventListener('load', () => {
-        mainContent.classList.remove('visible');
-        setTimeout(() => {
-            heroScreen.classList.add('hide-hero');
-            setTimeout(() => { heroScreen.style.display = 'none'; mainContent.classList.add('visible'); renderPage(); }, 700);
-        }, 1500);
-    });
+    window.addEventListener('load', () => { mainContent.classList.remove('visible'); setTimeout(() => { heroScreen.classList.add('hide-hero'); setTimeout(() => { heroScreen.style.display = 'none'; mainContent.classList.add('visible'); renderPage(); }, 700); }, 1500); });
 </script>
 </body>
 </html>
