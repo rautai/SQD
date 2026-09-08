@@ -1,17 +1,18 @@
+
 <!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World remains — ВПИ</title>
+  <title>World remains — Карта мира</title>
 
   <style>
     :root {
-      --bg: #070812;
-      --panel: rgba(17, 16, 37, .84);
-      --line: rgba(162, 136, 255, .23);
-      --text: #f6f4ff;
-      --muted: #aaa6c5;
+      --bg: #060711;
+      --panel: rgba(15, 16, 34, .82);
+      --line: rgba(160, 136, 255, .24);
+      --text: #f5f3ff;
+      --muted: #a7a4bf;
       --violet: #a380ff;
       --cyan: #5de7e1;
       --pink: #f48cc8;
@@ -27,10 +28,9 @@
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at 82% 8%, rgba(163,128,255,.2), transparent 27rem),
-        radial-gradient(circle at 8% 90%, rgba(93,231,225,.12), transparent 28rem),
+        radial-gradient(circle at 80% 4%, rgba(163,128,255,.18), transparent 26rem),
+        radial-gradient(circle at 10% 88%, rgba(93,231,225,.12), transparent 28rem),
         var(--bg);
-      overflow-x: hidden;
     }
 
     body::before {
@@ -38,7 +38,7 @@
       position: fixed;
       z-index: -1;
       inset: 0;
-      opacity: .3;
+      opacity: .28;
       pointer-events: none;
       background-image:
         linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
@@ -47,221 +47,46 @@
       mask-image: linear-gradient(to bottom, black, transparent);
     }
 
-    button, a { font: inherit; }
-    button { border: 0; }
+    button {
+      font: inherit;
+    }
 
     .app {
-      width: min(1220px, calc(100% - 36px));
+      width: min(1440px, calc(100% - 36px));
+      min-height: 100vh;
       margin: 0 auto;
-      padding: 22px 0 40px;
+      padding: 22px 0;
     }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 17px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(12,12,28,.78);
-      backdrop-filter: blur(18px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--text);
-      text-decoration: none;
-    }
-
-    .brand img {
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(255,255,255,.24);
-      border-radius: 12px;
-      background: #141429;
-      object-fit: cover;
-    }
-
-    .brand strong {
-      display: block;
-      font-size: 14px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .brand span span {
-      display: block;
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .menu {
-      display: flex;
-      gap: 8px;
-    }
-
-    .menu-button {
-      padding: 10px 14px;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      color: var(--muted);
-      background: transparent;
-      cursor: pointer;
-      font-size: 13px;
-      transition: .2s ease;
-    }
-
-    .menu-button:hover,
-    .menu-button.active {
-      border-color: rgba(163,128,255,.52);
-      color: var(--text);
-      background: rgba(163,128,255,.13);
-    }
-
-    .page {
-      margin-top: 20px;
-    }
-
-    .page[hidden] {
-      display: none;
-    }
-
-    /* Главная */
-
-    .home-grid {
+    .dashboard {
       display: grid;
-      grid-template-columns: 1.35fr .65fr;
-      gap: 20px;
+      grid-template-columns: 255px minmax(480px, 1fr) 255px;
+      grid-template-areas: "left planet right";
+      gap: 18px;
+      min-height: calc(100vh - 44px);
     }
 
-    .hero,
-    .status-panel {
-      overflow: hidden;
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .left-side { grid-area: left; }
+    .right-side { grid-area: right; }
+
+    .panel {
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 20px;
       background: var(--panel);
       backdrop-filter: blur(16px);
     }
 
-    .hero {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      min-height: 550px;
-      padding: clamp(34px, 7vw, 78px);
+    .info-panel {
+      padding: 20px;
     }
 
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: -160px;
-      right: -130px;
-      width: 450px;
-      height: 450px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(244,140,200,.35), rgba(163,128,255,.1) 45%, transparent 70%);
-    }
-
-    .hero::after {
-      content: "WR";
-      position: absolute;
-      top: 34px;
-      right: 34px;
-      color: rgba(255,255,255,.045);
-      font-size: clamp(140px, 20vw, 280px);
-      font-weight: 900;
-      letter-spacing: -.13em;
-      line-height: 1;
-    }
-
-    .eyebrow {
-      position: relative;
-      width: fit-content;
-      margin: 0 0 16px;
-      padding: 7px 11px;
-      border: 1px solid rgba(93,231,225,.36);
-      border-radius: 99px;
-      color: var(--cyan);
-      background: rgba(93,231,225,.08);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .13em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      position: relative;
-      max-width: 640px;
-      margin: 0;
-      font-size: clamp(54px, 7.4vw, 94px);
-      line-height: .9;
-      letter-spacing: -.08em;
-    }
-
-    h1 span {
-      display: block;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(246,244,255,.78);
-    }
-
-    .hero p {
-      position: relative;
-      max-width: 510px;
-      margin: 25px 0 0;
-      color: #c1bdd6;
-      font-size: 16px;
-      line-height: 1.65;
-    }
-
-    .hero-actions {
-      position: relative;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 30px;
-    }
-
-    .primary-button,
-    .secondary-button {
-      padding: 13px 17px;
-      border-radius: 11px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 800;
-      transition: transform .2s ease;
-    }
-
-    .primary-button {
-      color: #0a0a18;
-      background: linear-gradient(100deg, var(--cyan), #b4efff);
-    }
-
-    .secondary-button {
-      border: 1px solid rgba(163,128,255,.46);
-      color: var(--text);
-      background: rgba(163,128,255,.1);
-    }
-
-    .primary-button:hover,
-    .secondary-button:hover {
-      transform: translateY(-2px);
-    }
-
-    .status-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 24px;
-    }
-
-    .status-label {
+    .label {
       margin: 0;
       color: var(--muted);
       font-size: 10px;
@@ -270,47 +95,55 @@
       text-transform: uppercase;
     }
 
-    .online {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 7px;
+    .season-number {
+      margin: 11px 0 2px;
       color: var(--cyan);
-      font-size: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
     }
 
-    .online i {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 14px var(--cyan);
-    }
-
-    .stat-card {
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,.07);
-      border-radius: 16px;
-      background: rgba(5,6,18,.48);
-    }
-
-    .stat-card strong {
-      display: block;
-      margin: 8px 0 4px;
-      font-size: 29px;
+    .season-name {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1;
       letter-spacing: -.05em;
     }
 
-    .stat-card p:not(.status-label) {
-      margin: 0;
+    .season-text {
+      margin: 15px 0 0;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.55;
+    }
+
+    .stability {
+      padding: 20px;
+    }
+
+    .stability-value {
+      display: flex;
+      align-items: end;
+      gap: 7px;
+      margin: 12px 0;
+    }
+
+    .stability-value strong {
+      font-size: 44px;
+      line-height: .9;
+      letter-spacing: -.07em;
+    }
+
+    .stability-value span {
+      padding-bottom: 4px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .progress {
-      height: 7px;
-      margin-top: 17px;
+      height: 8px;
       overflow: hidden;
       border-radius: 100px;
       background: rgba(255,255,255,.08);
@@ -321,138 +154,86 @@
       height: 100%;
       border-radius: inherit;
       background: linear-gradient(90deg, var(--violet), var(--pink), var(--cyan));
+      box-shadow: 0 0 18px rgba(163,128,255,.72);
     }
 
-    .coordinates {
-      margin-top: auto;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
-      color: #807c98;
-      font-family: Consolas, monospace;
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    /* Карта */
-
-    .map-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      min-height: 680px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--panel);
-    }
-
-    .map-sidebar {
-      z-index: 2;
-      padding: 24px;
-      border-right: 1px solid var(--line);
-      background: rgba(11,11,27,.9);
-    }
-
-    .map-sidebar h2 {
-      margin: 5px 0 8px;
-      font-size: 28px;
-      letter-spacing: -.05em;
-    }
-
-    .map-intro {
-      margin: 0 0 18px;
+    .small-text {
+      margin: 12px 0 0;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
-    .map-state {
+    .metric {
+      padding: 20px;
+    }
+
+    .metric-value {
+      display: block;
+      margin: 9px 0 5px;
+      font-size: 37px;
+      letter-spacing: -.06em;
+    }
+
+    .metric-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .signal {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 18px;
+      margin-top: 11px;
       color: var(--cyan);
       font-size: 11px;
     }
 
-    .map-state i {
-      width: 7px;
-      height: 7px;
+    .signal i {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: currentColor;
-      box-shadow: 0 0 12px currentColor;
+      box-shadow: 0 0 14px currentColor;
     }
 
-    .country-info {
-      min-height: 350px;
-      padding: 17px;
-      border: 1px solid rgba(163,128,255,.28);
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(163,128,255,.12), rgba(93,231,225,.04));
+    /* Планета */
+
+    .planet-panel {
+      grid-area: planet;
+      position: relative;
+      min-height: 680px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 52% 50%, rgba(93,231,225,.09), transparent 30%),
+        radial-gradient(circle at 85% 12%, rgba(163,128,255,.16), transparent 25%),
+        rgba(9,10,24,.82);
     }
 
-    .country-flag-image {
-      display: block;
-      width: 160px;
-      height: 120px;
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 10px;
-      background: #0a0a18;
-      object-fit: cover;
+    .map-brand {
+      position: absolute;
+      z-index: 2;
+      top: 22px;
+      left: 22px;
     }
 
-    .flag-missing {
-      display: grid;
-      width: 160px;
-      height: 120px;
-      place-items: center;
-      border: 1px dashed rgba(255,255,255,.2);
-      border-radius: 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .country-info h3 {
-      margin: 5px 0 14px;
-      font-size: 23px;
-      letter-spacing: -.04em;
-    }
-
-    .country-info p {
+    .map-brand p {
       margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .country-info dl {
-      display: grid;
-      gap: 11px;
-      margin: 19px 0 0;
-    }
-
-    .country-info dt {
-      color: #85809e;
+      color: var(--cyan);
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: .1em;
+      letter-spacing: .14em;
       text-transform: uppercase;
     }
 
-    .country-info dd {
-      margin: 3px 0 0;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .map-stage {
-      position: relative;
-      min-width: 0;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 48%, rgba(93,231,225,.1), transparent 30%),
-        radial-gradient(circle at 82% 12%, rgba(163,128,255,.16), transparent 27%),
-        #080914;
+    .map-brand h1 {
+      margin: 5px 0 0;
+      font-size: 26px;
+      letter-spacing: -.05em;
     }
 
     #world-canvas {
@@ -468,37 +249,113 @@
       cursor: grabbing;
     }
 
-    .map-hud {
+    .country-card {
       position: absolute;
-      right: 18px;
-      bottom: 18px;
-      display: flex;
-      align-items: end;
-      gap: 12px;
+      z-index: 3;
+      top: 22px;
+      right: 22px;
+      width: min(245px, calc(100% - 44px));
+      padding: 15px;
+      border: 1px solid rgba(163,128,255,.35);
+      border-radius: 16px;
+      background: rgba(10,10,25,.82);
+      backdrop-filter: blur(14px);
     }
 
-    .map-hud p {
-      max-width: 190px;
-      margin: 0;
+    .flag-image {
+      display: block;
+      width: 128px;
+      height: 96px;
+      margin-bottom: 13px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 9px;
+      background: #090a18;
+      object-fit: cover;
+    }
+
+    .flag-placeholder {
+      display: grid;
+      width: 128px;
+      height: 96px;
+      margin-bottom: 13px;
+      place-items: center;
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 9px;
       color: var(--muted);
       font-size: 11px;
-      line-height: 1.45;
-      text-align: right;
     }
 
-    .map-actions {
+    .country-card h2 {
+      margin: 5px 0 13px;
+      font-size: 21px;
+      letter-spacing: -.04em;
+    }
+
+    .country-card dl {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .country-card dt {
+      color: #86829e;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .country-card dd {
+      margin: 3px 0 0;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .map-state {
+      position: absolute;
+      z-index: 3;
+      bottom: 20px;
+      left: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-size: 11px;
+    }
+
+    .map-state i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .map-controls {
+      position: absolute;
+      z-index: 3;
+      right: 20px;
+      bottom: 20px;
       display: grid;
       justify-items: end;
       gap: 7px;
     }
 
-    .rotation-button {
-      padding: 9px 11px;
-      border: 1px solid rgba(93,231,225,.42);
+    .rotation-button,
+    .zoom-controls button {
+      border: 1px solid rgba(163,128,255,.45);
       border-radius: 10px;
+      color: var(--text);
+      background: rgba(163,128,255,.13);
+      cursor: pointer;
+    }
+
+    .rotation-button {
+      padding: 10px 12px;
+      border-color: rgba(93,231,225,.42);
       color: var(--cyan);
       background: rgba(93,231,225,.08);
-      cursor: pointer;
       font-size: 11px;
       font-weight: 800;
     }
@@ -510,188 +367,194 @@
     }
 
     .zoom-controls {
-      display: grid;
+      display: flex;
       gap: 6px;
     }
 
     .zoom-controls button {
       width: 38px;
       height: 38px;
-      border: 1px solid rgba(163,128,255,.45);
-      border-radius: 10px;
-      color: var(--text);
-      background: rgba(163,128,255,.13);
-      cursor: pointer;
       font-size: 20px;
+    }
+
+    @media (max-width: 1050px) {
+      .dashboard {
+        grid-template-columns: 210px minmax(420px, 1fr) 210px;
+      }
+
+      .country-card {
+        width: 210px;
+      }
     }
 
     @media (max-width: 800px) {
       .app {
-        width: min(100% - 24px, 1180px);
-        padding-top: 12px;
+        width: min(100% - 24px, 700px);
+        padding: 12px 0 24px;
       }
 
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
+      .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "planet"
+          "left"
+          "right";
+        min-height: auto;
       }
 
-      .menu {
-        width: 100%;
+      .planet-panel,
+      #world-canvas {
+        min-height: 520px;
       }
 
-      .menu-button {
-        flex: 1;
-        padding: 10px 7px;
+      .side {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
       }
 
-      .home-grid,
-      .map-layout {
+      .country-card {
+        top: 86px;
+        right: 12px;
+        width: 200px;
+      }
+
+      .map-brand {
+        top: 16px;
+        left: 16px;
+      }
+
+      .map-controls {
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .side {
         grid-template-columns: 1fr;
       }
 
-      .hero {
-        min-height: 470px;
+      .planet-panel,
+      #world-canvas {
+        min-height: 480px;
       }
 
-      .map-sidebar {
-        order: 2;
-        border-top: 1px solid var(--line);
-        border-right: 0;
+      .country-card {
+        top: auto;
+        right: 12px;
+        bottom: 82px;
+        width: calc(100% - 24px);
       }
 
-      #world-canvas,
-      .map-stage {
-        min-height: 450px;
+      .flag-image,
+      .flag-placeholder {
+        width: 96px;
+        height: 72px;
+      }
+
+      .map-state {
+        left: 14px;
+        bottom: 16px;
+        max-width: 55%;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <header class="topbar">
-      <a class="brand" href="#" id="brand-home">
-        <img
-          src="https://i.ibb.co/S4DhT0Cm/36ec2b9c8da3d65b6cc8ba77a4702c6c.webp"
-          alt="World remains"
-        >
-        <span>
-          <strong>World remains</strong>
-          <span>Военно-политическая игра</span>
-        </span>
-      </a>
+  <main class="app">
+    <div class="dashboard">
+      <aside class="side left-side">
+        <section class="panel info-panel">
+          <p class="label">World remains</p>
+          <p class="season-number">Сезон I</p>
+          <h2 class="season-name">После падения</h2>
+          <p class="season-text">
+            Мир выжил. Теперь игроки решают, каким станет его новый порядок.
+          </p>
+        </section>
 
-      <nav class="menu">
-        <button class="menu-button active" data-view="home">Главная</button>
-        <button class="menu-button" data-view="map">Карта мира</button>
-        <button class="menu-button" id="discord-button">Discord</button>
-      </nav>
-    </header>
+        <section class="panel stability">
+          <p class="label">Стабильность мира</p>
 
-    <main>
-      <section class="page" id="home-page">
-        <div class="home-grid">
-          <section class="hero">
-            <div class="eyebrow">Сезон I · После падения</div>
-            <h1>World <span>remains.</span></h1>
+          <div class="stability-value">
+            <strong>68%</strong>
+            <span>СТАБИЛЬНО</span>
+          </div>
 
-            <p>
-              Старый порядок исчез. Каждая страна теперь — отдельная история,
-              а судьба мира зависит от решений игроков.
-            </p>
+          <div class="progress"><div></div></div>
 
-            <div class="hero-actions">
-              <button class="primary-button" data-view="map">Открыть карту мира</button>
-              <button class="secondary-button" id="join-button">Присоединиться</button>
-            </div>
-          </section>
+          <p class="small-text">
+            Баланс меняется действиями стран, дипломатией и военными конфликтами.
+          </p>
+        </section>
+      </aside>
 
-          <aside class="status-panel">
-            <div>
-              <p class="status-label">Статус мира</p>
-              <div class="online"><i></i> сервер в сети</div>
-            </div>
-
-            <div class="stat-card">
-              <p class="status-label">Активные игроки</p>
-              <strong id="member-count">—</strong>
-              <p id="member-caption">Получаем данные Discord…</p>
-            </div>
-
-            <div class="stat-card">
-              <p class="status-label">Стабильность мира</p>
-              <strong>68%</strong>
-              <div class="progress"><div></div></div>
-            </div>
-
-            <div class="coordinates">
-              SECTOR: WR-01<br>
-              CYCLE: 2049.08<br>
-              SIGNAL: STABLE
-            </div>
-          </aside>
+      <section class="planet-panel">
+        <div class="map-brand">
+          <p>Спутниковая сеть WR-01</p>
+          <h1>Карта мира</h1>
         </div>
-      </section>
 
-      <section class="page" id="map-page" hidden>
-        <div class="map-layout">
-          <aside class="map-sidebar">
-            <p class="eyebrow">Глобальная сеть WR-01</p>
-            <h2>Карта мира</h2>
+        <canvas id="world-canvas"></canvas>
 
-            <p class="map-intro">
-              Наведите на страну, чтобы увидеть игрока, флаг и ВВП.
-            </p>
+        <aside class="country-card" id="country-card">
+          <div class="flag-placeholder">Наведите на страну</div>
+          <p class="label">Информация о стране</p>
+          <h2>Карта мира</h2>
+          <p class="small-text">Наведите курсор на страну, чтобы получить информацию.</p>
+        </aside>
 
-            <div class="map-state" id="map-state">
-              <i></i>
-              <span>Загрузка границ мира…</span>
-            </div>
+        <div class="map-state" id="map-state">
+          <i></i>
+          <span>Загрузка границ мира…</span>
+        </div>
 
-            <section class="country-info" id="country-info">
-              <div class="flag-missing">Нет страны</div>
-              <p class="status-label" style="margin-top:14px">Глобальная карта</p>
-              <h3>Выберите страну</h3>
-              <p>Наведите курсор на границу страны на планете.</p>
-            </section>
-          </aside>
+        <div class="map-controls">
+          <button class="rotation-button" id="rotation-toggle" type="button">
+            Автовращение: вкл
+          </button>
 
-          <div class="map-stage">
-            <canvas id="world-canvas"></canvas>
-
-            <div class="map-hud">
-              <p>Тяните планету для вращения. Используйте колесо мыши или кнопки масштаба.</p>
-
-              <div class="map-actions">
-                <button class="rotation-button" id="rotation-toggle" type="button">
-                  Автовращение: вкл
-                </button>
-
-                <div class="zoom-controls">
-                  <button type="button" data-zoom="0.12">+</button>
-                  <button type="button" data-zoom="-0.12">−</button>
-                </div>
-              </div>
-            </div>
+          <div class="zoom-controls">
+            <button type="button" data-zoom="0.12">+</button>
+            <button type="button" data-zoom="-0.12">−</button>
           </div>
         </div>
       </section>
-    </main>
-  </div>
+
+      <aside class="side right-side">
+        <section class="panel metric">
+          <p class="label">Участники Discord</p>
+          <strong class="metric-value" id="discord-count">—</strong>
+          <p class="metric-description" id="discord-caption">
+            Получаем данные сервера…
+          </p>
+          <div class="signal"><i></i> сервер в сети</div>
+        </section>
+
+        <section class="panel metric">
+          <p class="label">Зарегистрированные игроки</p>
+          <strong class="metric-value" id="registered-count">—</strong>
+          <p class="metric-description" id="registered-caption">
+            Ожидаем данные игрового бота…
+          </p>
+        </section>
+      </aside>
+    </div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 
   <script>
     const DISCORD_INVITE = "py425wrJH";
-    const DISCORD_URL = "https://discord.gg/py425wrJH";
 
     /*
-      Укажите API вашего бота.
+      Укажите URL API вашего игрового бота.
 
-      Формат:
+      Пример ответа:
 
       {
+        "registeredPlayers": 284,
         "countries": {
           "643": {
             "player": "Ivan",
@@ -701,21 +564,27 @@
         }
       }
 
-      flagCode — двухбуквенный код страны:
-      ru, us, de, fr, ee, ua и так далее.
+      flagCode — двухбуквенный ISO-код флага:
+      ru, us, de, fr, ee, ua и т. д.
     */
     const BOT_API_URL = "";
 
-    const homePage = document.querySelector("#home-page");
-    const mapPage = document.querySelector("#map-page");
     const canvas = document.querySelector("#world-canvas");
     const ctx = canvas.getContext("2d");
-    const countryInfo = document.querySelector("#country-info");
+
+    const countryCard = document.querySelector("#country-card");
     const mapState = document.querySelector("#map-state");
     const rotationButton = document.querySelector("#rotation-toggle");
 
+    const discordCount = document.querySelector("#discord-count");
+    const discordCaption = document.querySelector("#discord-caption");
+
+    const registeredCount = document.querySelector("#registered-count");
+    const registeredCaption = document.querySelector("#registered-caption");
+
     let worldCountries = [];
     let botCountries = {};
+
     let hoveredCountry = null;
     let selectedCountry = null;
 
@@ -724,6 +593,7 @@
     let centerX = 0;
     let centerY = 0;
     let radius = 0;
+
     let yaw = .45;
     let pitch = -.12;
     let zoom = 1;
@@ -743,77 +613,6 @@
       }[character]));
     }
 
-    function showView(view) {
-      const isMap = view === "map";
-
-      homePage.hidden = isMap;
-      mapPage.hidden = !isMap;
-
-      document.querySelectorAll("[data-view]").forEach(button => {
-        button.classList.toggle("active", button.dataset.view === view);
-      });
-
-      if (isMap) {
-        requestAnimationFrame(resizeCanvas);
-      }
-    }
-
-    document.querySelectorAll("[data-view]").forEach(button => {
-      button.addEventListener("click", () => showView(button.dataset.view));
-    });
-
-    document.querySelector("#brand-home").addEventListener("click", event => {
-      event.preventDefault();
-      showView("home");
-    });
-
-    document.querySelector("#discord-button").addEventListener("click", () => {
-      window.open(DISCORD_URL, "_blank", "noopener");
-    });
-
-    document.querySelector("#join-button").addEventListener("click", () => {
-      window.open(DISCORD_URL, "_blank", "noopener");
-    });
-
-    function updateRotationButton() {
-      rotationButton.textContent = autoRotate
-        ? "Автовращение: вкл"
-        : "Автовращение: выкл";
-
-      rotationButton.classList.toggle("off", !autoRotate);
-    }
-
-    rotationButton.addEventListener("click", () => {
-      autoRotate = !autoRotate;
-      updateRotationButton();
-    });
-
-    async function updateMemberCount() {
-      const countElement = document.querySelector("#member-count");
-      const captionElement = document.querySelector("#member-caption");
-
-      try {
-        const response = await fetch(
-          `https://discord.com/api/v10/invites/${DISCORD_INVITE}?with_counts=true`,
-          { cache: "no-store" }
-        );
-
-        if (!response.ok) throw new Error("Discord unavailable");
-
-        const data = await response.json();
-
-        if (!Number.isFinite(data.approximate_member_count)) {
-          throw new Error("Count unavailable");
-        }
-
-        countElement.textContent = data.approximate_member_count.toLocaleString("ru-RU");
-        captionElement.textContent = "Участников Discord-сервера";
-      } catch {
-        countElement.textContent = "—";
-        captionElement.textContent = "Количество появится после публикации сайта";
-      }
-    }
-
     function resizeCanvas() {
       const bounds = canvas.getBoundingClientRect();
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -826,6 +625,19 @@
       height = bounds.height;
       centerX = width / 2;
       centerY = height / 2;
+    }
+
+    function setMapState(text, color = "var(--cyan)") {
+      mapState.style.color = color;
+      mapState.innerHTML = `<i></i><span>${escapeHtml(text)}</span>`;
+    }
+
+    function updateRotationButton() {
+      rotationButton.textContent = autoRotate
+        ? "Автовращение: вкл"
+        : "Автовращение: выкл";
+
+      rotationButton.classList.toggle("off", !autoRotate);
     }
 
     function project(lat, lon) {
@@ -892,16 +704,15 @@
     function countryContains(country, point) {
       if (!country || !point) return false;
 
-      const geometry = country.geometry;
-      const polygons = geometry.type === "Polygon"
-        ? [geometry.coordinates]
-        : geometry.coordinates;
+      const polygons = country.geometry.type === "Polygon"
+        ? [country.geometry.coordinates]
+        : country.geometry.coordinates;
 
       return polygons.some(polygon => {
-        const insideOuter = pointInRing(point, polygon[0]);
+        const insideOuterBorder = pointInRing(point, polygon[0]);
         const insideHole = polygon.slice(1).some(hole => pointInRing(point, hole));
 
-        return insideOuter && !insideHole;
+        return insideOuterBorder && !insideHole;
       });
     }
 
@@ -909,7 +720,7 @@
       return worldCountries.find(country => countryContains(country, point)) || null;
     }
 
-    function drawRing(ring, strokeStyle, lineWidth) {
+    function drawRing(ring, color, lineWidth) {
       ctx.beginPath();
       let activeLine = false;
 
@@ -929,41 +740,41 @@
         }
       });
 
-      ctx.strokeStyle = strokeStyle;
+      ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
       ctx.stroke();
     }
 
     function drawCountry(country, highlighted = false) {
-      const geometry = country.geometry;
-      const polygons = geometry.type === "Polygon"
-        ? [geometry.coordinates]
-        : geometry.coordinates;
+      const polygons = country.geometry.type === "Polygon"
+        ? [country.geometry.coordinates]
+        : country.geometry.coordinates;
 
       const record = botCountries[String(country.id)];
-      const hasPlayer = record && (record.player || record.owner);
+      const occupied = record && (record.player || record.owner);
 
-      let lineColor = hasPlayer
-        ? "rgba(133,205,231,.58)"
-        : "rgba(160,189,232,.28)";
+      let color = occupied
+        ? "rgba(132,205,231,.57)"
+        : "rgba(160,189,232,.27)";
 
       let lineWidth = .75;
 
       if (highlighted) {
-        lineColor = "#5de7e1";
+        color = "#5de7e1";
         lineWidth = 2;
       }
 
       polygons.forEach(polygon => {
-        polygon.forEach(ring => drawRing(ring, lineColor, lineWidth));
+        polygon.forEach(ring => drawRing(ring, color, lineWidth));
       });
     }
 
-    function drawGlobe() {
+    function drawPlanet() {
       if (!width || !height) return;
 
       ctx.clearRect(0, 0, width, height);
-      radius = Math.min(width, height) * .38 * zoom;
+
+      radius = Math.min(width, height) * .39 * zoom;
 
       const background = ctx.createRadialGradient(
         centerX, centerY, radius * .12,
@@ -977,12 +788,12 @@
       ctx.fillStyle = background;
       ctx.fillRect(0, 0, width, height);
 
-      for (let i = 0; i < 75; i++) {
-        const starX = (i * 157.3) % width;
-        const starY = (i * 83.9) % height;
+      for (let i = 0; i < 82; i++) {
+        const x = (i * 157.3) % width;
+        const y = (i * 83.9) % height;
 
         ctx.fillStyle = `rgba(220,230,255,${.12 + (i % 4) * .08})`;
-        ctx.fillRect(starX, starY, 1, 1);
+        ctx.fillRect(x, y, 1, 1);
       }
 
       ctx.save();
@@ -999,7 +810,7 @@
         radius
       );
 
-      planet.addColorStop(0, "#3f5a80");
+      planet.addColorStop(0, "#3e5a80");
       planet.addColorStop(.35, "#1d3153");
       planet.addColorStop(.78, "#101a34");
       planet.addColorStop(1, "#080c1d");
@@ -1019,7 +830,7 @@
 
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(121,220,255,.54)";
+      ctx.strokeStyle = "rgba(121,220,255,.55)";
       ctx.lineWidth = 1.5;
       ctx.shadowColor = "#5de7e1";
       ctx.shadowBlur = 18;
@@ -1053,16 +864,17 @@
 
     function showCountryInfo(country) {
       if (!country) {
-        countryInfo.innerHTML = `
-          <div class="flag-missing">Нет страны</div>
-          <p class="status-label" style="margin-top:14px">Глобальная карта</p>
-          <h3>Выберите страну</h3>
-          <p>Наведите курсор на границу страны на планете.</p>
+        countryCard.innerHTML = `
+          <div class="flag-placeholder">Наведите на страну</div>
+          <p class="label">Информация о стране</p>
+          <h2>Карта мира</h2>
+          <p class="small-text">Наведите курсор на границу страны.</p>
         `;
         return;
       }
 
       const data = botCountries[String(country.id)] || {};
+
       const name = data.name || country.properties.name || "Неизвестная страна";
       const player = data.player || data.owner || "Свободная территория";
       const gdp = formatGDP(data.gdp);
@@ -1077,13 +889,13 @@
           : "");
 
       const flagHtml = flagUrl
-        ? `<img class="country-flag-image" src="${escapeHtml(flagUrl)}" alt="Флаг ${escapeHtml(name)}">`
-        : `<div class="flag-missing">Флаг не указан</div>`;
+        ? `<img class="flag-image" src="${escapeHtml(flagUrl)}" alt="Флаг ${escapeHtml(name)}">`
+        : `<div class="flag-placeholder">Флаг не указан</div>`;
 
-      countryInfo.innerHTML = `
-        <div class="country-flag">${flagHtml}</div>
-        <p class="status-label" style="margin-top:14px">Страна на карте</p>
-        <h3>${escapeHtml(name)}</h3>
+      countryCard.innerHTML = `
+        ${flagHtml}
+        <p class="label">Информация о стране</p>
+        <h2>${escapeHtml(name)}</h2>
 
         <dl>
           <div>
@@ -1104,9 +916,78 @@
       `;
     }
 
-    function setMapState(text, color = "var(--cyan)") {
-      mapState.style.color = color;
-      mapState.innerHTML = `<i></i><span>${escapeHtml(text)}</span>`;
+    async function updateDiscordCount() {
+      try {
+        const response = await fetch(
+          `https://discord.com/api/v10/invites/${DISCORD_INVITE}?with_counts=true`,
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+
+        if (!Number.isFinite(data.approximate_member_count)) {
+          throw new Error();
+        }
+
+        discordCount.textContent = data.approximate_member_count.toLocaleString("ru-RU");
+        discordCaption.textContent = "Участников Discord-сервера";
+      } catch {
+        discordCount.textContent = "—";
+        discordCaption.textContent = "Данные Discord временно недоступны";
+      }
+    }
+
+    function applyBotData(payload) {
+      const countries = payload.countries || {};
+
+      if (Array.isArray(countries)) {
+        countries.forEach(country => {
+          const id = country.countryId || country.id;
+
+          if (id !== undefined) {
+            botCountries[String(id)] = country;
+          }
+        });
+      } else if (countries && typeof countries === "object") {
+        botCountries = countries;
+      }
+
+      const registeredPlayers =
+        payload.registeredPlayers ??
+        payload.registered_players ??
+        payload.playersCount;
+
+      if (Number.isFinite(registeredPlayers)) {
+        registeredCount.textContent = registeredPlayers.toLocaleString("ru-RU");
+        registeredCaption.textContent = "Игроков зарегистрировано в ВПИ";
+      }
+    }
+
+    async function loadBotData() {
+      if (!BOT_API_URL) {
+        registeredCaption.textContent = "Подключите API игрового бота";
+        return;
+      }
+
+      try {
+        const response = await fetch(BOT_API_URL, {
+          cache: "no-store"
+        });
+
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+        applyBotData(data);
+
+        setMapState(
+          `Данные бота синхронизированы · ${Object.keys(botCountries).length} стран`
+        );
+      } catch {
+        registeredCaption.textContent = "Данные игрового бота недоступны";
+        setMapState("Границы загружены · бот недоступен", "var(--yellow)");
+      }
     }
 
     async function loadBorders() {
@@ -1130,59 +1011,24 @@
       }
     }
 
-    function applyBotData(payload) {
-      const countries = payload.countries || payload;
-
-      if (Array.isArray(countries)) {
-        countries.forEach(country => {
-          const id = country.countryId || country.id;
-
-          if (id !== undefined) {
-            botCountries[String(id)] = country;
-          }
-        });
-
-        return;
-      }
-
-      if (countries && typeof countries === "object") {
-        botCountries = countries;
-      }
-    }
-
-    async function loadBotData() {
-      if (!BOT_API_URL) return;
-
-      try {
-        const response = await fetch(BOT_API_URL, {
-          cache: "no-store"
-        });
-
-        if (!response.ok) throw new Error();
-
-        const data = await response.json();
-        applyBotData(data);
-
-        setMapState(
-          `Данные бота синхронизированы · ${Object.keys(botCountries).length} стран`
-        );
-      } catch {
-        setMapState("Границы загружены · данные бота недоступны", "var(--yellow)");
-      }
-    }
-
     function animate() {
-      if (!mapPage.hidden && autoRotate && !dragging) {
+      if (autoRotate && !dragging && !hoveredCountry) {
         yaw += .0015;
       }
 
-      drawGlobe();
+      drawPlanet();
       requestAnimationFrame(animate);
     }
+
+    rotationButton.addEventListener("click", () => {
+      autoRotate = !autoRotate;
+      updateRotationButton();
+    });
 
     canvas.addEventListener("pointerdown", event => {
       dragging = true;
       moved = false;
+
       lastPointer = {
         x: event.clientX,
         y: event.clientY
@@ -1214,12 +1060,12 @@
         return;
       }
 
-      const geoPoint = canvasToCoordinates(
+      const coordinates = canvasToCoordinates(
         event.clientX - bounds.left,
         event.clientY - bounds.top
       );
 
-      const country = getCountryAtPoint(geoPoint);
+      const country = getCountryAtPoint(coordinates);
 
       if (country !== hoveredCountry) {
         hoveredCountry = country;
@@ -1236,12 +1082,12 @@
 
       const bounds = canvas.getBoundingClientRect();
 
-      const geoPoint = canvasToCoordinates(
+      const coordinates = canvasToCoordinates(
         event.clientX - bounds.left,
         event.clientY - bounds.top
       );
 
-      selectedCountry = getCountryAtPoint(geoPoint);
+      selectedCountry = getCountryAtPoint(coordinates);
       showCountryInfo(selectedCountry);
     });
 
@@ -1271,9 +1117,10 @@
     window.addEventListener("resize", resizeCanvas);
 
     updateRotationButton();
-    updateMemberCount();
+    updateDiscordCount();
 
-    setInterval(updateMemberCount, 5 * 60 * 1000);
+    setInterval(updateDiscordCount, 5 * 60 * 1000);
+    setInterval(loadBotData, 60 * 1000);
 
     resizeCanvas();
     loadBorders();
@@ -1282,3 +1129,4 @@
   </script>
 </body>
 </html>
+```
